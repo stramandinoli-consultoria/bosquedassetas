@@ -1,0 +1,196 @@
+/*
+ * Tema da floresta. Usa peças recortadas de duas imagens de referência:
+ *  - "Kit de UI Fantasia Florestal.png"   -> src/assets/forest/ (tabuleiro, HUD, rodapé)
+ *  - "Atlas de UI do Bosque das Setas.png" -> src/assets/atlas/  (logo, botões, ícones, cenário)
+ * Carregado depois de styles.css, então só sobrescreve o visual.
+ */
+:root {
+  --card: rgba(48, 30, 16, 0.96);
+  --glass: rgba(70, 42, 20, 0.55);
+  --wood-1: #a8643a;
+  --wood-2: #74391b;
+  --wood-edge: #3a1e0d;
+  --ink: #23140a;
+  --font-display: 'Lilita One', var(--font);
+  /* contorno escuro do texto, como no atlas */
+  --outline: -1.5px -1.5px 0 var(--ink), 1.5px -1.5px 0 var(--ink), -1.5px 1.5px 0 var(--ink), 1.5px 1.5px 0 var(--ink), 0 3px 0 var(--ink);
+}
+body { background: #0f2a1c; }
+#app { position: relative; z-index: 1; }
+
+/* ---------- madeira (botões e pílulas sem imagem própria) ---------- */
+.pill, .icon-btn, .tool-zoom {
+  background: linear-gradient(var(--wood-1), var(--wood-2));
+  border: 2px solid var(--wood-edge);
+  box-shadow: inset 0 2px 0 rgba(255, 214, 160, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.25), 0 3px 0 rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+.pill { font-weight: 800; }
+
+/* ---------- HUD ---------- */
+.hud { gap: 8px 12px; }
+.hearts { display: flex; gap: 3px; letter-spacing: 0; }
+.heart { display: block; width: 30px; height: 28px; background: url('./assets/forest/heart.png') center / contain no-repeat;
+  filter: drop-shadow(0 0 5px rgba(255, 60, 60, 0.55)) drop-shadow(0 2px 1px rgba(0, 0, 0, 0.4)); transition: filter 0.3s, opacity 0.3s; }
+.heart.off { filter: grayscale(1) brightness(0.45); opacity: 0.7; }
+
+/* barra de progresso: moldura de madeira com folhas; o preenchimento é dinâmico */
+.progress { position: relative; height: 34px; min-width: 150px; background: none; border-radius: 0; overflow: visible; }
+.progress::before {
+  content: ''; position: absolute; inset: 0;
+  border-style: solid; border-width: 0 46px;
+  border-image: url('./assets/forest/bar.png') 0 92 fill / 0 46px stretch;
+}
+.progress .track { position: absolute; left: 17px; right: 6px; top: 12px; bottom: 10px; border-radius: 99px; overflow: hidden;
+  background: #3d2312; box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.55); }
+.progress i { background: linear-gradient(#c6f56a, #62c12c 60%, #3f9a1c); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45); border-radius: 99px; }
+.hud-text { color: #fff; font-size: 15px; font-weight: 800; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55); padding: 0 4px; }
+
+/* ---------- tabuleiro: moldura de pedra com musgo ---------- */
+.board { overflow: visible; border-radius: 0; box-shadow: none; background: url('./assets/forest/frame.png') center / 100% 100% no-repeat; }
+/* área interna da moldura (medida no frame.png: 528x530) */
+.board-clip { position: absolute; top: 10.9%; right: 7.6%; bottom: 7.6%; left: 11%; overflow: hidden; border-radius: 8px; }
+.board-clip::before { content: ''; position: absolute; inset: 0; background: var(--skin-board, transparent); opacity: 0.3; pointer-events: none; }
+.board-stage { padding: 2.5%; }
+.arrow.lifted { filter: brightness(1.25) drop-shadow(0 0 0.12px #fff); }
+
+/* ---------- rodapé: botões do kit ---------- */
+.game-footer { gap: 18px; align-items: flex-end; }
+.tool { background: none; border-radius: 0; filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45)); }
+.tool-hint { width: 58px; height: 67px; background: url('./assets/forest/btn-hint.png') center / contain no-repeat; }
+.tool-restart { width: 64px; height: 63px; background: url('./assets/forest/btn-restart.png') center / contain no-repeat; }
+.tool-zoom { width: 60px; height: 60px; border-radius: 16px; }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+.tool-hint .badge { top: 0; left: 33px; right: auto; width: 23px; min-width: 23px; height: 23px; padding: 0;
+  background: linear-gradient(#ffc04a, #f08f1c); color: #2a1400; border: 2px solid #3b2010; font-size: 12px; }
+
+/* ---------- cartões e janelas ---------- */
+.modal { background: rgba(4, 14, 8, 0.7); }
+.modal-card {
+  background: none; box-shadow: none; border-radius: 0;
+  border-style: solid; border-width: 34px;
+  border-image: url('./assets/forest/frame.png') 66 fill / 34px stretch;
+  padding: 8px 10px 12px; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55));
+}
+.modal-card p { color: rgba(255, 245, 230, 0.85); }
+.modal-card h2 { text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45); }
+.tutorial {
+  background: none; box-shadow: none; border-radius: 0;
+  border-style: solid; border-width: 22px 22px 14px;
+  border-image: url('./assets/forest/plaque.png') 46 44 30 44 fill / 22px 22px 14px stretch;
+  padding: 4px 6px; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.5));
+}
+.tutorial p { text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5); }
+.skin-row, .card-box, .rank-row { background: rgba(48, 28, 14, 0.72); border: 2px solid rgba(30, 15, 5, 0.6); }
+.world { border: 3px solid rgba(30, 15, 5, 0.55); }
+.lvl-btn { background: linear-gradient(rgba(150, 90, 50, 0.85), rgba(100, 55, 25, 0.85)); border: 2px solid rgba(35, 18, 6, 0.8); }
+.lvl-btn.locked { background: rgba(20, 12, 6, 0.55); }
+.lvl-btn.current { background: var(--gold); }
+
+/* ---------- decoração do cenário (atrás das telas) ---------- */
+.forest-decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+/* propriedades separadas: o atalho "background" apagaria o background-image de cada peça */
+.forest-decor > div { position: absolute; background-position: center; background-size: contain; background-repeat: no-repeat; }
+.deco-mush { left: -10px; bottom: -6px; width: min(24vw, 128px); aspect-ratio: 128 / 178; background-image: url('./assets/atlas/mush-purple.png'); }
+.deco-plants { right: -16px; bottom: -4px; width: min(32vw, 180px); aspect-ratio: 188 / 112; background-image: url('./assets/forest/plants.png'); }
+.deco-leaves { left: -34px; top: 18%; width: min(26vw, 140px); aspect-ratio: 175 / 85; background-image: url('./assets/forest/leaves.png'); transform: rotate(-24deg); opacity: 0.75; }
+.forest-decor .firefly { width: 6px; height: 6px; border-radius: 50%; background: #f6ffb0;
+  box-shadow: 0 0 6px 2px rgba(220, 255, 120, 0.85), 0 0 16px 6px rgba(200, 255, 90, 0.35);
+  animation: firefly var(--dur, 7s) ease-in-out var(--delay, 0s) infinite alternate; }
+@keyframes firefly {
+  0% { transform: translate(0, 0); opacity: 0.2; }
+  40% { opacity: 1; }
+  100% { transform: translate(var(--dx, 30px), var(--dy, -40px)); opacity: 0.35; }
+}
+
+/* =====================================================================
+ * Atlas "Bosque das Setas"
+ * ===================================================================== */
+
+/* ---------- tipografia ---------- */
+h1, h2, h3, .btn, .pill, .badge, .hud-text, .lvl-btn b, .win-coins, .stats b, .rank-row .pos, .tag, .seg button {
+  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.3px;
+}
+h2, h3 { text-shadow: var(--outline); }
+
+/* ---------- ícones ---------- */
+.ico { display: inline-block; vertical-align: middle; object-fit: contain; pointer-events: none; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45)); }
+.pill-ico { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px; font-size: 17px; }
+.pill-ico .ico { width: 24px; height: 24px; }
+.pill-btn span { overflow: hidden; text-overflow: ellipsis; }
+.title-ico { width: 28px; height: 28px; margin: -4px 6px 0 0; }
+.tab-ico { width: 18px; height: 18px; margin: -3px 5px 0 0; }
+
+/* botões redondos/quadrados de madeira do atlas */
+.topbar > .icon-btn:first-child, .icon-btn.wood-gear {
+  border: 0; border-radius: 0; box-shadow: none; color: transparent; text-shadow: none; font-size: 0;
+  background: center / contain no-repeat; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.45));
+}
+.topbar > .icon-btn:first-child { width: 46px; height: 48px; background-image: url('./assets/atlas/wbtn-back.png'); }
+.icon-btn.wood-gear { width: 46px; height: 47px; background-image: url('./assets/atlas/wbtn-gear.png'); }
+
+/* ---------- botões grandes: peça do atlas sem texto + texto em HTML ---------- */
+.btn {
+  background: none; box-shadow: none; border-radius: 0;
+  border-style: solid; border-width: 16px 22px 19px;
+  border-image: url('./assets/atlas/btn-green.png') 22 30 26 fill / 16px 22px 19px stretch;
+  min-height: 60px; padding: 0 4px; margin: 4px 0;
+  color: #fff; font-size: 21px; line-height: 1.1; text-shadow: var(--outline);
+}
+.btn-alt    { border-image-source: url('./assets/atlas/btn-blue.png'); }
+.btn-shop   { border-image-source: url('./assets/atlas/btn-cyan.png'); }
+.btn-rank,
+.btn-danger { border-image-source: url('./assets/atlas/btn-orange.png'); }
+.btn-daily  { border-image-source: url('./assets/atlas/btn-purple.png'); }
+.btn-play {
+  border-image: url('./assets/atlas/btn-yellow.png') 24 30 28 fill / 17px 22px 20px stretch;
+  border-width: 17px 22px 20px; color: #4a2204; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+.btn-play .big { font-size: 30px; display: inline-flex; align-items: center; gap: 10px; }
+.btn-play .small { font-size: 14px; color: #5c3510; opacity: 1; font-family: var(--font); font-weight: 800; }
+.play-tri { width: 0; height: 0; border-style: solid; border-width: 11px 0 11px 18px; border-color: transparent transparent transparent #3b1d06; }
+.btn-small {
+  border-width: 11px 15px 13px; border-image-width: 11px 15px 13px;
+  min-height: 0; padding: 0 2px; font-size: 16px; margin: 0;
+}
+.btn-daily.done { background: none; box-shadow: none; font-size: 18px; filter: grayscale(0.6) brightness(0.85); }
+.btn-label { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 0; }
+.btn-label > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-ico { width: 32px; height: 32px; flex-shrink: 0; }
+.btn-label .btn-coin { width: 20px; height: 20px; margin: 0 -4px; }
+.home-buttons { gap: 2px; }
+.home-buttons .row { gap: 8px; }
+
+/* ---------- logo ---------- */
+.logo { margin: 2vh 0 1vh; }
+.logo-img { display: block; width: min(94%, 420px); height: auto; margin: 0 auto;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.5)); animation: logo-bob 3.2s ease-in-out infinite alternate; }
+@keyframes logo-bob { from { transform: translateY(0) rotate(-0.6deg); } to { transform: translateY(-7px) rotate(0.6deg); } }
+@media (min-height: 760px) { .logo { margin-top: 5vh; } }
+
+/* ---------- título da fase numa placa de madeira com musgo ---------- */
+.topbar h2.plaque {
+  flex: 0 1 auto; margin: -4px auto 0; min-width: 140px; max-width: 62%;
+  border-style: solid; border-width: 20px 16px 12px;
+  border-image: url('./assets/atlas/plaque-wood.png') 30 22 18 fill / 20px 16px 12px stretch;
+  padding: 0 6px; font-size: 20px; line-height: 1.15;
+}
+
+/* ---------- estrelas da vitória ---------- */
+.win-stars { display: flex; justify-content: center; gap: 6px; }
+.win-stars span img { width: 58px; height: 58px; }
+.win-stars span:not(.on) img { filter: grayscale(1) brightness(0.45); opacity: 0.7; }
+.win-stars span.on img { filter: drop-shadow(0 0 10px rgba(255, 217, 61, 0.7)); }
+.win-stars span:nth-child(2) img { width: 70px; height: 70px; margin-top: -10px; }
+
+/* ---------- cenário extra da tela inicial ---------- */
+.forest-decor .home-only { display: none; }
+body[data-screen='home'] .forest-decor .home-only { display: block; }
+body[data-screen='home'] .deco-plants, body[data-screen='home'] .deco-leaves { display: none; }
+.deco-vine-l { left: 0; top: -24px; width: 34px; aspect-ratio: 43 / 254; background-image: url('./assets/atlas/vine-v.png'); }
+.deco-vine-r { right: -4px; top: -30px; width: 42px; aspect-ratio: 59 / 246; background-image: url('./assets/atlas/vine-r.png'); }
+.deco-lantern { left: 10px; top: calc(150px + var(--safe-t)); width: 40px; aspect-ratio: 75 / 124; background-image: url('./assets/atlas/lantern.png');
+  transform-origin: 50% 0; animation: lantern 3s ease-in-out infinite alternate; filter: drop-shadow(0 0 14px rgba(255, 190, 80, 0.75)); }
+@keyframes lantern { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+.deco-stump { right: -10px; bottom: -8px; width: min(26vw, 123px); aspect-ratio: 123 / 131; background-image: url('./assets/atlas/stump.png'); }
+.deco-mush-orange { left: calc(min(24vw, 128px) - 26px); bottom: -4px; width: min(15vw, 76px); aspect-ratio: 88 / 126; background-image: url('./assets/atlas/mush-orange.png'); }

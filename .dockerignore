@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-single
+android
+ios
+legacy
+docs
+resources
+**/bin
+**/obj
+.git
