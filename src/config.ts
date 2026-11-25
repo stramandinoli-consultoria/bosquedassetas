@@ -29,9 +29,12 @@ export const CONFIG = {
   },
 } as const;
 
-export const WORLDS = [
+/** Conjunto de imagens usado no mundo (ver theme-forest.css e theme-beach.css). Sem "theme" = floresta. */
+export type Theme = 'forest' | 'beach';
+
+export const WORLDS: { name: { pt: string; en: string }; bg: [string, string]; theme?: Theme }[] = [
   { name: { pt: 'Bosque', en: 'Grove' }, bg: ['#1f5f4a', '#0d2b24'] },
-  { name: { pt: 'Praia', en: 'Beach' }, bg: ['#2b7fa8', '#0e2c44'] },
+  { name: { pt: 'Praia', en: 'Beach' }, bg: ['#2b7fa8', '#0e2c44'], theme: 'beach' },
   { name: { pt: 'Deserto', en: 'Desert' }, bg: ['#a8642b', '#3d1f0d'] },
   { name: { pt: 'Geleira', en: 'Glacier' }, bg: ['#4a8fb8', '#14304a'] },
   { name: { pt: 'Vulcão', en: 'Volcano' }, bg: ['#a8322b', '#3a0d0d'] },
