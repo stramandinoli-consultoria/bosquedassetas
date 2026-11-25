@@ -1,0 +1,80 @@
+/*
+ * Tema da praia (mundo 2 "Praia", fases 21–40, e as voltas seguintes: Praia II…).
+ * Peças recortadas de "imagens_para_assets/Kit de assets praia.png" -> src/assets/beach/
+ *
+ * Ativado por <body data-theme="beach">, que App.setBackground() define conforme o mundo.
+ * Só troca as imagens que existem no kit da praia; o resto continua igual ao theme-forest.css
+ * (botões verde/ciano, placa de título, ícones).
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='beach'] .heart { background-image: url('./assets/beach/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (423x91); o vão interno vai de x 44 a 376 e de y 36 a 60 */
+body[data-theme='beach'] .progress::before {
+  border-width: 0 22px;
+  border-image: url('./assets/beach/bar.png') 0 60 fill / 0 22px stretch;
+}
+body[data-theme='beach'] .progress .track { left: 16px; right: 18px; top: 13px; bottom: 12px; }
+
+/* ---------- tabuleiro: moldura de areia com conchas e flores ---------- */
+body[data-theme='beach'] .board { background-image: url('./assets/beach/frame.png'); }
+/* área interna da moldura (medida no frame.png: 560x566) */
+body[data-theme='beach'] .board-clip { top: 16.3%; right: 13.2%; bottom: 13.4%; left: 11.1%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='beach'] .tool-hint { width: 62px; height: 61px; background-image: url('./assets/beach/btn-hint.png'); }
+body[data-theme='beach'] .tool-restart { width: 64px; height: 58px; background-image: url('./assets/beach/btn-restart.png'); }
+/* o contador cobre a bolinha laranja que já vem desenhada na peça */
+body[data-theme='beach'] .tool-hint .badge { top: -2px; left: 42px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='beach'] .modal { background: rgba(4, 22, 34, 0.68); }
+body[data-theme='beach'] .modal-card {
+  border-width: 40px 32px 33px 27px;
+  border-image: url('./assets/beach/frame.png') 92 74 76 62 fill / 40px 32px 33px 27px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='beach'] .topbar > .icon-btn:first-child { background-image: url('./assets/beach/btn-back.png'); }
+body[data-theme='beach'] .btn-alt { border-image-source: url('./assets/beach/btn-blue.png'); }
+body[data-theme='beach'] .btn-rank,
+body[data-theme='beach'] .btn-danger { border-image-source: url('./assets/beach/btn-red.png'); }
+body[data-theme='beach'] .btn-daily { border-image-source: url('./assets/beach/btn-purple.png'); }
+body[data-theme='beach'] .btn-play { border-image-source: url('./assets/beach/btn-yellow.png'); }
+
+/* ---------- cenário ---------- */
+/* fora da praia, as peças da praia nunca aparecem */
+body:not([data-theme='beach']) .forest-decor .beach-only { display: none; }
+/* na praia, somem as peças da floresta (os vaga-lumes viram bolhas) */
+body[data-theme='beach'] .forest-decor > div:not(.beach-only):not(.firefly) { display: none; }
+
+body[data-theme='beach'] .deco-palm { left: -34px; top: 18%; width: min(24vw, 112px); aspect-ratio: 113 / 130;
+  background-image: url('./assets/beach/palm-leaf.png'); transform: rotate(-28deg); opacity: 0.8; }
+body[data-theme='beach'] .deco-coral { left: -8px; bottom: -6px; width: min(20vw, 96px); aspect-ratio: 104 / 125;
+  background-image: url('./assets/beach/coral-pink.png'); }
+body[data-theme='beach'] .deco-star { left: calc(min(20vw, 96px) - 22px); bottom: -6px; width: min(13vw, 60px); aspect-ratio: 104 / 120;
+  background-image: url('./assets/beach/star-orange.png'); transform: rotate(-12deg); }
+body[data-theme='beach'] .deco-stones { right: calc(min(18vw, 86px) - 34px); bottom: -10px; width: min(17vw, 80px); aspect-ratio: 124 / 114;
+  background-image: url('./assets/beach/stones.png'); }
+body[data-theme='beach'] .deco-seaweed { right: -10px; bottom: -6px; width: min(18vw, 86px); aspect-ratio: 109 / 159;
+  background-image: url('./assets/beach/seaweed.png'); }
+
+/* tela inicial: flores e folhas nos cantos de cima, concha e estrela no chão */
+body[data-theme='beach'][data-screen='home'] .deco-palm,
+body[data-theme='beach'][data-screen='home'] .deco-stones { display: none; }
+body[data-theme='beach'] .deco-hibiscus { left: -26px; top: calc(-14px + var(--safe-t)); width: min(30vw, 132px); aspect-ratio: 211 / 141;
+  background-image: url('./assets/beach/hibiscus.png'); transform: rotate(14deg); }
+body[data-theme='beach'] .deco-monstera { right: -30px; top: calc(-18px + var(--safe-t)); width: min(26vw, 118px); aspect-ratio: 111 / 118;
+  background-image: url('./assets/beach/monstera.png'); transform: rotate(200deg); }
+body[data-theme='beach'] .deco-shell { left: calc(min(20vw, 96px) + 34px); bottom: 0; width: min(12vw, 54px); aspect-ratio: 100 / 99;
+  background-image: url('./assets/beach/shell.png'); }
+body[data-theme='beach'] .deco-star-pink { right: calc(min(18vw, 86px) - 10px); bottom: -6px; width: min(15vw, 66px); aspect-ratio: 121 / 124;
+  background-image: url('./assets/beach/star-pink.png'); transform: rotate(16deg); }
+
+/* bolhas no lugar dos vaga-lumes */
+body[data-theme='beach'] .forest-decor .firefly {
+  width: 10px; height: 10px; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95) 0 18%, rgba(160, 240, 255, 0.25) 45%, rgba(120, 220, 255, 0.08) 70%);
+  border: 1px solid rgba(200, 250, 255, 0.75);
+  box-shadow: 0 0 8px 2px rgba(120, 230, 255, 0.45);
+}

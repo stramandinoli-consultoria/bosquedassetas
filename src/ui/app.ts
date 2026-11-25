@@ -1,5 +1,6 @@
+import beachBg from '../assets/beach/bg.jpg';
 import forestBg from '../assets/forest/bg.jpg';
-import { CONFIG, WORLDS } from '../config';
+import { CONFIG, WORLDS, type Theme } from '../config';
 import { levelAt } from '../engine/levels';
 import type { Level, PackedLevel } from '../engine/types';
 import { lang } from '../i18n';
@@ -19,6 +20,8 @@ export interface Screen {
   el: HTMLElement;
   destroy?(): void;
 }
+
+const THEME_BG: Record<Theme, string> = { forest: forestBg, beach: beachBg };
 
 function roman(n: number): string {
   const map: [number, string][] = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
@@ -71,11 +74,17 @@ export class App {
     return lap ? `${base} ${roman(lap + 1)}` : base;
   }
 
-  /** Fundo da floresta com um leve tom da cor do mundo por cima */
+  /**
+   * Fundo do mundo (floresta ou praia) com um leve tom da cor do mundo por cima.
+   * Também marca o tema em <body data-theme>, que troca as imagens das peças pelo CSS.
+   */
   setBackground(w: number): void {
-    const [a, b] = WORLDS[w % WORLDS.length].bg;
+    const world = WORLDS[w % WORLDS.length];
+    const theme: Theme = world.theme ?? 'forest';
+    const [a, b] = world.bg;
+    document.body.dataset.theme = theme;
     document.body.style.background =
-      `linear-gradient(${a}33, ${b}88) fixed, url(${forestBg}) center / cover no-repeat fixed, ${b}`;
+      `linear-gradient(${a}33, ${b}88) fixed, url(${THEME_BG[theme]}) center / cover no-repeat fixed, ${b}`;
   }
 
   go(route: Route, replace = false): void {

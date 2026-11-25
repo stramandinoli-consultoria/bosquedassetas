@@ -1,6 +1,7 @@
 import '@fontsource/lilita-one/latin-400.css';
 import './styles.css';
 import './theme-forest.css';
+import './theme-beach.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -16,7 +17,12 @@ import { mapScreen } from './ui/map';
 import { rankingScreen } from './ui/ranking';
 import { shopScreen } from './ui/shop';
 
-/** Cenário da floresta atrás de todas as telas: cogumelos, plantas, folhas e vaga-lumes */
+/**
+ * Cenário atrás de todas as telas. Tem as peças dos dois temas:
+ *  - floresta: cogumelos, plantas, folhas e vaga-lumes (theme-forest.css)
+ *  - praia ("beach-only"): corais, estrelas-do-mar, conchas e bolhas (theme-beach.css)
+ * O CSS mostra só as do tema atual (<body data-theme>).
+ */
 function addForestDecor() {
   const decor = document.createElement('div');
   decor.className = 'forest-decor';
@@ -31,6 +37,15 @@ function addForestDecor() {
     'home-only deco-lantern',
     'home-only deco-stump',
     'home-only deco-mush-orange',
+    'beach-only deco-palm',
+    'beach-only deco-coral',
+    'beach-only deco-star',
+    'beach-only deco-stones',
+    'beach-only deco-seaweed',
+    'beach-only home-only deco-hibiscus',
+    'beach-only home-only deco-monstera',
+    'beach-only home-only deco-shell',
+    'beach-only home-only deco-star-pink',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
