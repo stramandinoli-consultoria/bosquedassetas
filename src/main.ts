@@ -2,6 +2,7 @@ import '@fontsource/lilita-one/latin-400.css';
 import './styles.css';
 import './theme-forest.css';
 import './theme-beach.css';
+import './theme-desert.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -21,6 +22,7 @@ import { shopScreen } from './ui/shop';
  * Cenário atrás de todas as telas. Tem as peças dos dois temas:
  *  - floresta: cogumelos, plantas, folhas e vaga-lumes (theme-forest.css)
  *  - praia ("beach-only"): corais, estrelas-do-mar, conchas e bolhas (theme-beach.css)
+ *  - deserto ("desert-only"): cactos, pedras, árvore seca, placa e poeira brilhante (theme-desert.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -46,6 +48,12 @@ function addForestDecor() {
     'beach-only home-only deco-monstera',
     'beach-only home-only deco-shell',
     'beach-only home-only deco-star-pink',
+    'desert-only deco-cactus',
+    'desert-only deco-rocks',
+    'desert-only deco-dead-tree',
+    'desert-only deco-pear',
+    'desert-only home-only deco-signpost',
+    'desert-only home-only deco-flower',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');

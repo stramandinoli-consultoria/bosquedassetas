@@ -1,4 +1,5 @@
 import beachBg from '../assets/beach/bg.jpg';
+import desertBg from '../assets/desert/bg.jpg';
 import forestBg from '../assets/forest/bg.jpg';
 import { CONFIG, WORLDS, type Theme } from '../config';
 import { levelAt } from '../engine/levels';
@@ -21,7 +22,7 @@ export interface Screen {
   destroy?(): void;
 }
 
-const THEME_BG: Record<Theme, string> = { forest: forestBg, beach: beachBg };
+const THEME_BG: Record<Theme, string> = { forest: forestBg, beach: beachBg, desert: desertBg };
 
 function roman(n: number): string {
   const map: [number, string][] = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
