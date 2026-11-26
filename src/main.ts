@@ -5,6 +5,7 @@ import './theme-beach.css';
 import './theme-desert.css';
 import './theme-glacier.css';
 import './theme-volcano.css';
+import './theme-city.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -27,6 +28,7 @@ import { shopScreen } from './ui/shop';
  *  - deserto ("desert-only"): cactos, pedras, árvore seca, placa e poeira brilhante (theme-desert.css)
  *  - geleira ("glacier-only"): cristais, pinheiro, árvore seca, placa, pedras com neve e flocos (theme-glacier.css)
  *  - vulcão ("volcano-only"): rochas com lava, vulcãozinho, árvore seca com cristais, coluna e poça de lava e brasas (theme-volcano.css)
+ *  - cidade ("city-only"): prédios, árvore no vaso, floreira e hidrante, semáforo, banco e luzes (theme-city.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -68,6 +70,11 @@ function addForestDecor() {
     'volcano-only deco-mini-volcano',
     'volcano-only home-only deco-lava-pillar',
     'volcano-only home-only deco-lava-pool',
+    'city-only deco-building-brick',
+    'city-only deco-street-trees',
+    'city-only deco-building-classic',
+    'city-only home-only deco-traffic-light',
+    'city-only home-only deco-bench',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
