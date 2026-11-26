@@ -1,0 +1,91 @@
+/*
+ * Tema do deserto (mundo 3 "Deserto", fases 41–60, e as voltas seguintes: Deserto II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Deserto.png" -> src/assets/desert/
+ *
+ * Ativado por <body data-theme="desert">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta direita + faixa limpa do miolo + ponta direita espelhada). São estreitos, então as
+ * fatias laterais do border-image aqui são menores que as do tema da floresta.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='desert'] .heart { background-image: url('./assets/desert/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (439x86); o vão interno vai de x 38 a 401 e de y 37 a 61 */
+body[data-theme='desert'] .progress::before {
+  border-width: 0 24px;
+  border-image: url('./assets/desert/bar.png') 0 60 fill / 0 24px stretch;
+}
+body[data-theme='desert'] .progress .track { left: 15px; right: 15px; top: 15px; bottom: 10px; }
+
+/* ---------- tabuleiro: moldura de pedra com cactos ---------- */
+body[data-theme='desert'] .board { background-image: url('./assets/desert/frame.png'); }
+/* área interna da moldura (medida no frame.png: 487x502) */
+body[data-theme='desert'] .board-clip { top: 14.9%; right: 8.4%; bottom: 10.4%; left: 10.3%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='desert'] .tool-hint { width: 60px; height: 63px; background-image: url('./assets/desert/btn-hint.png'); }
+body[data-theme='desert'] .tool-restart { width: 62px; height: 60px; background-image: url('./assets/desert/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='desert'] .tool-hint .badge { top: 2px; left: 36px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='desert'] .modal { background: rgba(36, 18, 6, 0.66); }
+body[data-theme='desert'] .modal-card {
+  border-width: 34px 20px 24px 23px;
+  border-image: url('./assets/desert/frame.png') 75 42 52 50 fill / 34px 20px 24px 23px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='desert'] .topbar > .icon-btn:first-child { background-image: url('./assets/desert/btn-back.png'); }
+body[data-theme='desert'] .icon-btn.wood-gear { background-image: url('./assets/desert/btn-gear.png'); }
+
+body[data-theme='desert'] .btn-alt,
+body[data-theme='desert'] .btn-shop,
+body[data-theme='desert'] .btn-rank,
+body[data-theme='desert'] .btn-danger,
+body[data-theme='desert'] .btn-daily {
+  border-image-slice: 22 14 26 fill;
+  border-image-width: 16px 11px 19px;
+}
+body[data-theme='desert'] .btn-alt { border-image-source: url('./assets/desert/btn-blue.png'); }
+body[data-theme='desert'] .btn-shop { border-image-source: url('./assets/desert/btn-cyan.png'); }
+body[data-theme='desert'] .btn-rank,
+body[data-theme='desert'] .btn-danger { border-image-source: url('./assets/desert/btn-red.png'); }
+body[data-theme='desert'] .btn-daily { border-image-source: url('./assets/desert/btn-purple.png'); }
+body[data-theme='desert'] .btn-play {
+  border-image-source: url('./assets/desert/btn-yellow.png');
+  border-image-slice: 24 15 28 fill;
+  border-image-width: 17px 11px 20px;
+}
+body[data-theme='desert'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 11px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora do deserto, as peças do deserto nunca aparecem */
+body:not([data-theme='desert']) .forest-decor .desert-only { display: none; }
+/* no deserto, somem as peças dos outros temas (os vaga-lumes viram poeira brilhante) */
+body[data-theme='desert'] .forest-decor > div:not(.desert-only):not(.firefly) { display: none; }
+
+body[data-theme='desert'] .deco-cactus { left: -10px; bottom: -6px; width: min(20vw, 92px); aspect-ratio: 106 / 154;
+  background-image: url('./assets/desert/cactus-tall.png'); }
+body[data-theme='desert'] .deco-rocks { left: calc(min(20vw, 92px) - 28px); bottom: -10px; width: min(16vw, 74px); aspect-ratio: 130 / 114;
+  background-image: url('./assets/desert/rocks.png'); }
+body[data-theme='desert'] .deco-dead-tree { right: calc(min(22vw, 100px) - 34px); bottom: -6px; width: min(15vw, 68px); aspect-ratio: 105 / 126;
+  background-image: url('./assets/desert/dead-tree.png'); }
+body[data-theme='desert'] .deco-pear { right: -12px; bottom: -6px; width: min(22vw, 100px); aspect-ratio: 118 / 130;
+  background-image: url('./assets/desert/cactus-pear.png'); }
+
+/* tela inicial: placa de madeira e flor no lugar das pedras e da árvore seca */
+body[data-theme='desert'][data-screen='home'] .deco-rocks,
+body[data-theme='desert'][data-screen='home'] .deco-dead-tree { display: none; }
+body[data-theme='desert'] .deco-signpost { left: calc(min(20vw, 92px) - 16px); bottom: -4px; width: min(16vw, 72px); aspect-ratio: 100 / 90;
+  background-image: url('./assets/desert/signpost.png'); }
+body[data-theme='desert'] .deco-flower { right: calc(min(22vw, 100px) - 22px); bottom: -4px; width: min(15vw, 66px); aspect-ratio: 96 / 86;
+  background-image: url('./assets/desert/flower-bush.png'); }
+
+/* poeira dourada no lugar dos vaga-lumes */
+body[data-theme='desert'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #ffe2a0;
+  box-shadow: 0 0 6px 2px rgba(255, 190, 90, 0.8), 0 0 16px 5px rgba(255, 150, 40, 0.3);
+}
