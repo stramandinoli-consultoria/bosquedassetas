@@ -1,0 +1,85 @@
+/*
+ * Tema do vulcão (mundo 5 "Vulcão", fases 81–100, e as voltas seguintes: Vulcão II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Vulcao.png" -> src/assets/volcano/
+ *
+ * Ativado por <body data-theme="volcano">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + faixa limpa do miolo + ponta esquerda espelhada). Aqui a ponta é a esquerda
+ * porque o texto encosta na ponta direita e o botão roxo tem uma mancha nela.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='volcano'] .heart { background-image: url('./assets/volcano/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (428x87); o vão interno vai de x 36 a 388 e de y 34 a 55 */
+body[data-theme='volcano'] .progress::before {
+  border-width: 0 23px;
+  border-image: url('./assets/volcano/bar.png') 0 60 fill / 0 23px stretch;
+}
+body[data-theme='volcano'] .progress .track { left: 14px; right: 16px; top: 13px; bottom: 12px; }
+
+/* ---------- tabuleiro: moldura de pedra com lava ---------- */
+body[data-theme='volcano'] .board { background-image: url('./assets/volcano/frame.png'); }
+/* área interna da moldura (medida no frame.png: 484x476; miolo marrom de x 48 a 436 e de y 43 a 423) */
+body[data-theme='volcano'] .board-clip { top: 9.5%; right: 10%; bottom: 11.5%; left: 10%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='volcano'] .tool-hint { width: 66px; height: 59px; background-image: url('./assets/volcano/btn-hint.png'); }
+body[data-theme='volcano'] .tool-restart { width: 62px; height: 53px; background-image: url('./assets/volcano/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='volcano'] .tool-hint .badge { top: -1px; left: 42px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='volcano'] .modal { background: rgba(40, 10, 6, 0.66); }
+body[data-theme='volcano'] .modal-card {
+  border-width: 21px 23px 26px 23px;
+  border-image: url('./assets/volcano/frame.png') 46 50 56 50 fill / 21px 23px 26px 23px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='volcano'] .topbar > .icon-btn:first-child { background-image: url('./assets/volcano/btn-back.png'); }
+body[data-theme='volcano'] .icon-btn.wood-gear { background-image: url('./assets/volcano/btn-gear.png'); }
+
+body[data-theme='volcano'] .btn-alt,
+body[data-theme='volcano'] .btn-shop,
+body[data-theme='volcano'] .btn-rank,
+body[data-theme='volcano'] .btn-danger,
+body[data-theme='volcano'] .btn-daily,
+body[data-theme='volcano'] .btn-play {
+  border-image-slice: 26 15 28 fill;
+  border-image-width: 18px 11px 20px;
+}
+body[data-theme='volcano'] .btn-alt { border-image-source: url('./assets/volcano/btn-blue.png'); }
+body[data-theme='volcano'] .btn-shop { border-image-source: url('./assets/volcano/btn-cyan.png'); }
+body[data-theme='volcano'] .btn-rank,
+body[data-theme='volcano'] .btn-danger { border-image-source: url('./assets/volcano/btn-red.png'); }
+body[data-theme='volcano'] .btn-daily { border-image-source: url('./assets/volcano/btn-purple.png'); }
+body[data-theme='volcano'] .btn-play { border-image-source: url('./assets/volcano/btn-yellow.png'); }
+body[data-theme='volcano'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 7px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora do vulcão, as peças do vulcão nunca aparecem */
+body:not([data-theme='volcano']) .forest-decor .volcano-only { display: none; }
+/* no vulcão, somem as peças dos outros temas (os vaga-lumes viram brasas) */
+body[data-theme='volcano'] .forest-decor > div:not(.volcano-only):not(.firefly) { display: none; }
+
+body[data-theme='volcano'] .deco-lava-rock { left: -10px; bottom: -8px; width: min(26vw, 118px); aspect-ratio: 144 / 131;
+  background-image: url('./assets/volcano/lava-rock.png'); }
+body[data-theme='volcano'] .deco-dead-tree { right: calc(min(22vw, 100px) - 22px); bottom: -6px; width: min(24vw, 108px); aspect-ratio: 159 / 126;
+  background-image: url('./assets/volcano/dead-tree.png'); }
+body[data-theme='volcano'] .deco-mini-volcano { right: -8px; bottom: -4px; width: min(22vw, 100px); aspect-ratio: 125 / 115;
+  background-image: url('./assets/volcano/mini-volcano.png'); }
+
+/* tela inicial: coluna de lava e poça de lava no lugar da árvore seca */
+body[data-theme='volcano'][data-screen='home'] .deco-dead-tree { display: none; }
+body[data-theme='volcano'] .deco-lava-pillar { left: calc(min(26vw, 118px) - 20px); bottom: -4px; width: min(13vw, 58px); aspect-ratio: 85 / 121;
+  background-image: url('./assets/volcano/lava-pillar.png'); }
+body[data-theme='volcano'] .deco-lava-pool { right: calc(min(22vw, 100px) - 30px); bottom: -8px; width: min(30vw, 136px); aspect-ratio: 265 / 82;
+  background-image: url('./assets/volcano/lava-pool.png'); }
+
+/* brasas no lugar dos vaga-lumes */
+body[data-theme='volcano'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #ffd27a;
+  box-shadow: 0 0 6px 2px rgba(255, 150, 40, 0.9), 0 0 14px 4px rgba(255, 70, 20, 0.4);
+}
