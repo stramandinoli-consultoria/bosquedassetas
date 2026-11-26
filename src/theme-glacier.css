@@ -1,0 +1,87 @@
+/*
+ * Tema da geleira (mundo 4 "Geleira", fases 61–80, e as voltas seguintes: Geleira II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Geleira.png" -> src/assets/glacier/
+ *
+ * Ativado por <body data-theme="glacier">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta direita + faixa limpa do miolo + ponta direita espelhada), como no tema do deserto.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='glacier'] .heart { background-image: url('./assets/glacier/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (426x80); o vão interno vai de x 45 a 380 e de y 29 a 54 */
+body[data-theme='glacier'] .progress::before {
+  border-width: 0 25px;
+  border-image: url('./assets/glacier/bar.png') 0 60 fill / 0 25px stretch;
+}
+body[data-theme='glacier'] .progress .track { left: 19px; right: 19px; top: 12px; bottom: 11px; }
+
+/* ---------- tabuleiro: moldura de gelo com cristais ---------- */
+body[data-theme='glacier'] .board { background-image: url('./assets/glacier/frame.png'); }
+/* área interna da moldura (medida no frame.png: 509x509) */
+body[data-theme='glacier'] .board-clip { top: 11%; right: 8.5%; bottom: 14%; left: 8%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='glacier'] .tool-hint { width: 61px; height: 59px; background-image: url('./assets/glacier/btn-hint.png'); }
+body[data-theme='glacier'] .tool-restart { width: 58px; height: 59px; background-image: url('./assets/glacier/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='glacier'] .tool-hint .badge { top: 0; left: 37px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='glacier'] .modal { background: rgba(8, 28, 48, 0.66); }
+body[data-theme='glacier'] .modal-card {
+  border-width: 28px 20px 33px 19px;
+  border-image: url('./assets/glacier/frame.png') 60 44 72 42 fill / 28px 20px 33px 19px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='glacier'] .topbar > .icon-btn:first-child { background-image: url('./assets/glacier/btn-back.png'); }
+body[data-theme='glacier'] .icon-btn.wood-gear { background-image: url('./assets/glacier/btn-gear.png'); }
+
+body[data-theme='glacier'] .btn-alt,
+body[data-theme='glacier'] .btn-shop,
+body[data-theme='glacier'] .btn-rank,
+body[data-theme='glacier'] .btn-danger,
+body[data-theme='glacier'] .btn-daily {
+  border-image-slice: 24 14 26 fill;
+  border-image-width: 17px 10px 19px;
+}
+body[data-theme='glacier'] .btn-alt { border-image-source: url('./assets/glacier/btn-blue.png'); }
+body[data-theme='glacier'] .btn-shop { border-image-source: url('./assets/glacier/btn-cyan.png'); }
+body[data-theme='glacier'] .btn-rank,
+body[data-theme='glacier'] .btn-danger { border-image-source: url('./assets/glacier/btn-red.png'); }
+body[data-theme='glacier'] .btn-daily { border-image-source: url('./assets/glacier/btn-purple.png'); }
+body[data-theme='glacier'] .btn-play {
+  border-image-source: url('./assets/glacier/btn-yellow.png');
+  border-image-slice: 26 15 28 fill;
+  border-image-width: 18px 11px 20px;
+}
+body[data-theme='glacier'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 7px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da geleira, as peças da geleira nunca aparecem */
+body:not([data-theme='glacier']) .forest-decor .glacier-only { display: none; }
+/* na geleira, somem as peças dos outros temas (os vaga-lumes viram flocos de neve) */
+body[data-theme='glacier'] .forest-decor > div:not(.glacier-only):not(.firefly) { display: none; }
+
+body[data-theme='glacier'] .deco-ice-crystals { left: -12px; bottom: -8px; width: min(30vw, 136px); aspect-ratio: 225 / 143;
+  background-image: url('./assets/glacier/crystals.png'); }
+body[data-theme='glacier'] .deco-bare-tree { right: calc(min(20vw, 90px) - 26px); bottom: -6px; width: min(16vw, 74px); aspect-ratio: 127 / 132;
+  background-image: url('./assets/glacier/bare-tree.png'); }
+body[data-theme='glacier'] .deco-pine { right: -8px; bottom: -4px; width: min(20vw, 90px); aspect-ratio: 114 / 133;
+  background-image: url('./assets/glacier/pine.png'); }
+
+/* tela inicial: placa de madeira e pedras com neve no lugar da árvore seca */
+body[data-theme='glacier'][data-screen='home'] .deco-bare-tree { display: none; }
+body[data-theme='glacier'] .deco-ice-sign { left: calc(min(30vw, 136px) - 22px); bottom: -4px; width: min(14vw, 64px); aspect-ratio: 103 / 136;
+  background-image: url('./assets/glacier/signpost.png'); }
+body[data-theme='glacier'] .deco-snow-rocks { right: calc(min(20vw, 90px) - 30px); bottom: -8px; width: min(26vw, 118px); aspect-ratio: 229 / 105;
+  background-image: url('./assets/glacier/snow-rocks.png'); }
+
+/* flocos de neve no lugar dos vaga-lumes */
+body[data-theme='glacier'] .forest-decor .firefly {
+  width: 6px; height: 6px; background: #ffffff;
+  box-shadow: 0 0 6px 2px rgba(220, 240, 255, 0.85), 0 0 14px 4px rgba(150, 210, 255, 0.35);
+}

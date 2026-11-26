@@ -3,6 +3,7 @@ import './styles.css';
 import './theme-forest.css';
 import './theme-beach.css';
 import './theme-desert.css';
+import './theme-glacier.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -23,6 +24,7 @@ import { shopScreen } from './ui/shop';
  *  - floresta: cogumelos, plantas, folhas e vaga-lumes (theme-forest.css)
  *  - praia ("beach-only"): corais, estrelas-do-mar, conchas e bolhas (theme-beach.css)
  *  - deserto ("desert-only"): cactos, pedras, árvore seca, placa e poeira brilhante (theme-desert.css)
+ *  - geleira ("glacier-only"): cristais, pinheiro, árvore seca, placa, pedras com neve e flocos (theme-glacier.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -54,6 +56,11 @@ function addForestDecor() {
     'desert-only deco-pear',
     'desert-only home-only deco-signpost',
     'desert-only home-only deco-flower',
+    'glacier-only deco-ice-crystals',
+    'glacier-only deco-bare-tree',
+    'glacier-only deco-pine',
+    'glacier-only home-only deco-ice-sign',
+    'glacier-only home-only deco-snow-rocks',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
