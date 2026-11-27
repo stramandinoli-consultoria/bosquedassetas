@@ -12,7 +12,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import levels from '../src/data/levels.json' with { type: 'json' };
 import { levelAt, dailyLevel } from '../src/engine/levels';
-import { buildOccupancy, checkExit } from '../src/engine/rules';
+import { replay as engineReplay } from '../src/engine/replay';
 import type { Level, PackedLevel } from '../src/engine/types';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -23,19 +23,10 @@ const users = new Map<string, U>();
 const tokens = new Map<string, string>();
 const daily = new Map<string, { userId: string; mistakes: number; moves: number; at: number }>();
 
+/** Refaz a partida com as regras da engine (as mesmas do jogo e do servidor .NET) */
 function replay(level: Level, moves: number[]) {
-  const n = level.arrows.length;
-  if (moves.length < n || moves.length > n * 4 + 50) return null;
-  const occ = buildOccupancy(level);
-  const alive = new Array(n).fill(true);
-  let removed = 0, mistakes = 0;
-  for (const id of moves) {
-    if (id < 0 || id >= n || !alive[id]) return null;
-    const a = level.arrows[id];
-    if (checkExit(level.n, occ, a).ok) { alive[id] = false; a.cells.forEach((c) => (occ[c] = -1)); removed++; } else mistakes++;
-  }
-  if (removed !== n) return null;
-  return { stars: Math.max(1, 3 - mistakes), mistakes, moves: moves.length };
+  const r = engineReplay(level, moves);
+  return r.valid ? { stars: r.stars, mistakes: r.mistakes, moves: r.moves } : null;
 }
 const me = (u: U) => ({ id: u.id, email: u.email, nickname: u.nickname, maxLevel: u.maxLevel, totalStars: u.totalStars, stars: Array.from({ length: u.maxLevel }, (_, i) => u.stars.get(i) ?? 0), state: u.state });
 const today = () => new Date().toISOString().slice(0, 10);

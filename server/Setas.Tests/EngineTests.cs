@@ -77,6 +77,40 @@ public class EngineParityTests
         }
     }
 
+    /// <summary>
+    /// Mecânicas especiais: refaz as partidas gravadas pelo TypeScript (solução e partida com erros)
+    /// e confere o resultado de cada toque e o resultado final do replay.
+    /// </summary>
+    [Fact]
+    public void Mecanicas_IguaisAoJavaScript()
+    {
+        var catalog = new LevelCatalog();
+        int checkedRuns = 0;
+        foreach (var run in V.GetProperty("mechanics").EnumerateArray())
+        {
+            int index = run.GetProperty("index").GetInt32();
+            var level = catalog.Get(index);
+            Assert.True(level.Mechanics is { Count: > 0 }, $"fase {index + 1} deveria ter mecânica");
+            var moves = run.GetProperty("moves").EnumerateArray().Select(x => x.GetInt32()).ToArray();
+            var steps = run.GetProperty("steps").EnumerateArray().ToArray();
+            var state = new GameState(level);
+            var sent = new List<int>();
+            for (int i = 0; i < moves.Length; i++)
+            {
+                var r = state.Tap(moves[i]);
+                string kind = steps[i][0].GetString()!;
+                Assert.True(kind == r.Kind.ToString().ToLowerInvariant(), $"fase {index + 1}, toque {i}: esperado {kind}, deu {r.Kind}");
+                Assert.True(steps[i][1].GetInt32() == r.LivesLost, $"fase {index + 1}, toque {i}: vidas perdidas diferentes");
+                if (r.Kind != TapKind.Locked) sent.Add(moves[i]);
+            }
+            var result = Replay.Run(level, sent);
+            Assert.Equal(run.GetProperty("valid").GetBoolean(), result.Valid);
+            if (result.Valid) Assert.Equal(run.GetProperty("mistakes").GetInt32(), result.Mistakes);
+            checkedRuns++;
+        }
+        Assert.True(checkedRuns >= 30);
+    }
+
     [Fact]
     public void FasesCuradas_CarregamETemSolucao()
     {

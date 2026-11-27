@@ -1,6 +1,6 @@
 import { CONFIG } from '../config';
 import { dailyLevel } from '../engine/levels';
-import type { Level } from '../engine/types';
+import type { Level, MechanicType } from '../engine/types';
 import { Board } from '../game/board';
 import { t, type TKey } from '../i18n';
 import { Progress } from '../state/progress';
@@ -10,6 +10,24 @@ import type { App, Screen } from './app';
 import { coinPill, h, icon, modal, toast } from './dom';
 
 type Mode = { kind: 'level'; index: number } | { kind: 'daily' };
+
+/** Textos do balão que apresenta cada mecânica */
+const MECH_TITLE: Record<MechanicType, TKey> = {
+  ice: 'mechIceTitle',
+  magma: 'mechMagmaTitle',
+  flip: 'mechFlipTitle',
+  vine: 'mechVineTitle',
+  gate: 'mechGateTitle',
+  orbit: 'mechOrbitTitle',
+};
+const MECH_TEXT: Record<MechanicType, TKey> = {
+  ice: 'mechIce',
+  magma: 'mechMagma',
+  flip: 'mechFlip',
+  vine: 'mechVine',
+  gate: 'mechGate',
+  orbit: 'mechOrbit',
+};
 
 export function gameScreen(app: App, route: { name: 'game'; index: number } | { name: 'daily' }): Screen {
   const mode: Mode = route.name === 'daily' ? { kind: 'daily' } : { kind: 'level', index: route.index };
@@ -48,25 +66,39 @@ export function gameScreen(app: App, route: { name: 'game'; index: number } | { 
   };
 
   // ---------- tabuleiro ----------
+  const loseLives = (k: number) => {
+    mistakes += k;
+    lives -= k;
+    s.haptics.error();
+    heartsEl.classList.remove('hit');
+    void heartsEl.offsetWidth;
+    heartsEl.classList.add('hit');
+  };
   const board = new Board(level, skinById(p.skin), {
-    onExit: (a) => {
-      moveLog.push(a.id);
+    onTap: (tapped, r) => {
+      // seta travada (gelo): não é jogada, não vai para o servidor e não tira vida
+      if (r.kind === 'locked') {
+        s.audio.play('bump');
+        s.haptics.impact('light');
+        toast(t('mechLockedIce', { n: board.state.ice[r.arrow] }));
+        return;
+      }
+      moveLog.push(tapped);
       moves++;
-      s.audio.play('exit');
-      s.haptics.impact('light');
-      dismissTutorial(0);
-      updateHud();
-    },
-    onBump: (a) => {
-      moveLog.push(a.id);
-      moves++;
-      mistakes++;
-      lives--;
-      s.audio.play('bump');
-      s.haptics.error();
-      heartsEl.classList.remove('hit');
-      void heartsEl.offsetWidth;
-      heartsEl.classList.add('hit');
+      if (r.kind === 'exit') {
+        s.audio.play('exit');
+        s.haptics.impact('light');
+        dismissTutorial(0);
+        dismissMechIntro();
+        if (r.erupted.length) {
+          loseLives(r.erupted.length);
+          s.audio.play('bump');
+          toast(t('mechErupt'));
+        }
+      } else {
+        loseLives(1);
+        s.audio.play('bump');
+      }
       updateHud();
       if (lives <= 0) lose();
     },
@@ -114,7 +146,35 @@ export function gameScreen(app: App, route: { name: 'game'; index: number } | { 
     fit();
     updateHud();
     showTutorial();
+    showMechIntro();
   });
+
+  // ---------- apresentação da mecânica (1ª fase de cada mundo com mecânica nova) ----------
+  let mechIntro: HTMLElement | null = null;
+  function showMechIntro() {
+    if (mode.kind !== 'level' || tutorial) return;
+    const types = [...new Set((level.mechanics ?? []).map((m) => m.type))];
+    if (!types.length) return;
+    // aparece na 1ª fase do mundo e sempre que o jogador ainda não viu a regra
+    const seen = p.mechSeen ?? [];
+    const fresh = types.filter((tp) => !seen.includes(tp));
+    if (!fresh.length && mode.index % CONFIG.worldSize !== 0) return;
+    const tp = (fresh[0] ?? types[0]) as MechanicType;
+    const box = h(
+      'div',
+      { class: 'tutorial mech-intro' },
+      h('p', {}, h('b', {}, t(MECH_TITLE[tp])), ' ', t(MECH_TEXT[tp])),
+      h('button', { class: 'btn btn-small', onclick: () => dismissMechIntro() }, t('tutOk')),
+    );
+    p.mechSeen = [...new Set([...seen, ...types])];
+    progress.save();
+    mechIntro = box;
+    el.appendChild(box);
+  }
+  function dismissMechIntro() {
+    mechIntro?.remove();
+    mechIntro = null;
+  }
 
   // ---------- tutorial (fases 1 a 3) ----------
   function showTutorial() {

@@ -15,6 +15,8 @@ export interface ProgressData {
   settings: { sound: boolean; haptics: boolean; lang: Lang };
   daily: { date: string; done: boolean; streak: number };
   winsSinceAd: number;
+  /** Mecânicas especiais que o jogador já viu apresentadas (balão da 1ª vez) */
+  mechSeen: string[];
 }
 
 const KEY = 'progress.v1';
@@ -31,6 +33,7 @@ export function defaults(): ProgressData {
     settings: { sound: true, haptics: true, lang },
     daily: { date: '', done: false, streak: 0 },
     winsSinceAd: 0,
+    mechSeen: [],
   };
 }
 

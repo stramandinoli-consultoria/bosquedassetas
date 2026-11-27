@@ -33,7 +33,7 @@ public sealed class LevelCatalog
         return _daily.GetOrAdd(date, Generator.Daily);
     }
 
-    /// <summary>Lê o formato compacto: [n, dificuldade, [[dir, cor, ...células]]]</summary>
+    /// <summary>Lê o formato compacto: [n, dificuldade, [[dir, cor, ...células]], mecânicas?] (ver PackedLevel em src/engine/types.ts)</summary>
     public static List<Level> Parse(string json)
     {
         using var doc = JsonDocument.Parse(json);
@@ -48,7 +48,19 @@ public sealed class LevelCatalog
                 var nums = a.EnumerateArray().Select(x => x.GetInt32()).ToArray();
                 arrows.Add(new Arrow(id++, nums[2..], nums[0], nums[1]));
             }
-            list.Add(new Level(n, arrows));
+            List<Mechanic>? mechanics = null;
+            if (lvl.GetArrayLength() > 3)
+            {
+                mechanics = new List<Mechanic>();
+                foreach (var m in lvl[3].EnumerateArray())
+                {
+                    var v = m.EnumerateArray().Select(x => x.GetInt32()).ToArray();
+                    if (v[0] < Mechanic.Ice || v[0] > Mechanic.Magma)
+                        throw new InvalidOperationException($"Mecânica desconhecida no levels.json: {v[0]}");
+                    mechanics.Add(new Mechanic(v[0], v[1], v.Length > 2 ? v[2] : 0));
+                }
+            }
+            list.Add(new Level(n, arrows, mechanics));
         }
         return list;
     }

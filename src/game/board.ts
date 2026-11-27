@@ -1,4 +1,16 @@
-import { buildOccupancy, checkExit, freeArrows, head } from '../engine/rules';
+import {
+  cellsOf,
+  createState,
+  dirOf,
+  headOf,
+  partnerOf,
+  rayOf,
+  safeMoves,
+  solveState,
+  tap as applyTap,
+  type GameState,
+  type TapResult,
+} from '../engine/state';
 import { DIRS, type Arrow, type Level } from '../engine/types';
 import type { Skin } from '../state/skins';
 
@@ -6,12 +18,21 @@ const NS = 'http://www.w3.org/2000/svg';
 const PAD = 0.15;
 const LONG_PRESS_MS = 280;
 const MOVE_TOLERANCE = 10;
+/** Símbolos dos pares chave/portão (cor + forma, para não depender só de cor) */
+const GATE_SYMBOLS = [
+  { s: '♦', c: '#ff5a5a' },
+  { s: '♣', c: '#3ddc84' },
+  { s: '♠', c: '#5aa8ff' },
+  { s: '♥', c: '#ff8ad8' },
+  { s: '★', c: '#ffd23d' },
+];
 
 export interface BoardEvents {
-  /** Seta começou a sair (o caminho estava livre) */
-  onExit(a: Arrow, remaining: number): void;
-  /** Seta bateu em outra */
-  onBump(a: Arrow, blocker: Arrow): void;
+  /**
+   * Resultado de um toque que contou (saída, batida ou seta travada).
+   * tapped = seta tocada (é o que vai para a lista de jogadas do servidor).
+   */
+  onTap(tapped: number, r: Exclude<TapResult, { kind: 'ignored' }>, remaining: number): void;
   /** Todas as setas saíram (depois da última animação) */
   onClear(): void;
   /** Mostrou a prévia do caminho (toque longo) */
@@ -25,6 +46,10 @@ interface ArrowView {
   paths: SVGPathElement[];
   /** contorno e preenchimento da ponta */
   heads: SVGPolygonElement[];
+  /** marcas da mecânica (gelo, magma, órbita, símbolo da chave…) */
+  marks: SVGGElement;
+  badge?: SVGTextElement;
+  coat?: SVGPathElement;
   alive: boolean;
   busy: boolean;
 }
@@ -45,6 +70,8 @@ type Pt = [number, number];
  * - toque rápido: tenta tirar a seta
  * - toque longo: mostra a prévia do caminho (verde = livre, vermelho = bloqueado)
  * - pinça com dois dedos: zoom; arrastar com zoom: mover
+ *
+ * As regras ficam todas em src/engine/state.ts; aqui é só desenho e animação.
  */
 export class Board {
   readonly el: HTMLDivElement;
@@ -54,10 +81,13 @@ export class Board {
   private svg: SVGSVGElement;
   private fx: SVGGElement;
   private previewG: SVGGElement;
+  /** portões e cipós */
+  private mechG: SVGGElement;
   private views: ArrowView[] = [];
-  private occ: Int16Array;
+  private gateEls = new Map<number, SVGGElement>();
+  private vineEls = new Map<number, SVGPathElement>();
+  readonly state: GameState;
   private n: number;
-  private removed = 0;
   private animating = 0;
   locked = false;
 
@@ -84,7 +114,7 @@ export class Board {
     private events: BoardEvents,
   ) {
     this.n = level.n;
-    this.occ = buildOccupancy(level);
+    this.state = createState(level);
     this.el = document.createElement('div');
     this.el.className = 'board';
     this.clip = document.createElement('div');
@@ -111,9 +141,12 @@ export class Board {
         this.svg.appendChild(d);
       }
 
+    this.mechG = document.createElementNS(NS, 'g');
+    this.svg.appendChild(this.mechG);
     this.previewG = document.createElementNS(NS, 'g');
     this.svg.appendChild(this.previewG);
     for (const a of level.arrows) this.views.push(this.makeView(a));
+    this.drawMechanics();
     this.fx = document.createElementNS(NS, 'g');
     this.svg.appendChild(this.fx);
 
@@ -121,7 +154,7 @@ export class Board {
   }
 
   get remaining(): number {
-    return this.level.arrows.length - this.removed;
+    return this.level.arrows.length - this.state.removed;
   }
   get total(): number {
     return this.level.arrows.length;
@@ -157,10 +190,12 @@ export class Board {
     const body = mkPath('body', color, 0.3);
     const head = mkHead('head', color, 0.06);
     const shine = mkPath('shine', 'rgba(255,255,255,.38)', 0.08);
-    g.append(edge, edgeHead, body, head, shine);
+    const marks = document.createElementNS(NS, 'g');
+    marks.setAttribute('class', 'marks');
+    g.append(edge, edgeHead, body, head, shine, marks);
     this.svg.appendChild(g);
-    const v: ArrowView = { a, g, paths: [edge, body, shine], heads: [edgeHead, head], alive: true, busy: false };
-    this.draw(v, this.basePath(a), 0);
+    const v: ArrowView = { a, g, paths: [edge, body, shine], heads: [edgeHead, head], marks, alive: true, busy: false };
+    this.draw(v, this.basePath(a.id), 0);
     return v;
   }
 
@@ -168,8 +203,9 @@ export class Board {
     return [(idx % this.n) + 0.5, Math.floor(idx / this.n) + 0.5];
   }
 
-  private basePath(a: Arrow): Pt[] {
-    return a.cells.map((i) => this.center(i));
+  /** Centro das células da seta, na orientação atual (a mão dupla inverte) */
+  private basePath(id: number): Pt[] {
+    return cellsOf(this.state, id).map((i) => this.center(i));
   }
 
   private at(P: Pt[], s: number): Pt {
@@ -189,14 +225,150 @@ export class Board {
     pts.push(this.at(P, s1));
     const d = 'M' + pts.map((p) => `${p[0].toFixed(3)} ${p[1].toFixed(3)}`).join('L');
     for (const p of v.paths) p.setAttribute('d', d);
+    v.coat?.setAttribute('d', d);
     const H = pts[pts.length - 1];
-    const [dy, dx] = DIRS[v.a.dir];
+    const [dy, dx] = DIRS[dirOf(this.state, v.a.id)];
     const B: Pt = [H[0] - dx * 0.06, H[1] - dy * 0.06];
     const T: Pt = [H[0] + dx * 0.38, H[1] + dy * 0.38];
     const px = -dy * 0.26;
     const py = dx * 0.26;
     const pts2 = `${B[0] + px},${B[1] + py} ${T[0]},${T[1]} ${B[0] - px},${B[1] - py}`;
     for (const hd of v.heads) hd.setAttribute('points', pts2);
+  }
+
+  // ---------- mecânicas ----------
+  private svgText(x: number, y: number, text: string, cls: string): SVGTextElement {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', x.toFixed(3));
+    t.setAttribute('y', y.toFixed(3));
+    t.setAttribute('class', cls);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('dominant-baseline', 'central');
+    t.textContent = text;
+    return t;
+  }
+
+  /** Célula do meio do corpo, onde fica o selo da mecânica (longe da ponta) */
+  private badgeAt(id: number): Pt {
+    const cells = this.level.arrows[id].cells;
+    return this.center(cells[Math.max(0, Math.floor((cells.length - 1) / 2))]);
+  }
+
+  private drawMechanics(): void {
+    let gateIdx = 0;
+    for (const m of this.level.mechanics ?? []) {
+      switch (m.type) {
+        case 'ice': {
+          const v = this.views[m.arrow];
+          v.g.classList.add('mech-ice');
+          const coat = document.createElementNS(NS, 'path');
+          coat.setAttribute('class', 'ice-coat');
+          v.g.insertBefore(coat, v.marks);
+          v.coat = coat;
+          const [x, y] = this.badgeAt(m.arrow);
+          v.badge = this.svgText(x, y, '', 'mech-badge ice-badge');
+          v.marks.appendChild(v.badge);
+          this.draw(v, this.basePath(m.arrow), 0);
+          break;
+        }
+        case 'magma': {
+          const v = this.views[m.arrow];
+          v.g.classList.add('mech-magma');
+          const [x, y] = this.badgeAt(m.arrow);
+          v.badge = this.svgText(x, y, '', 'mech-badge magma-badge');
+          v.marks.appendChild(v.badge);
+          break;
+        }
+        case 'flip': {
+          const v = this.views[m.arrow];
+          v.g.classList.add('mech-flip');
+          const [x, y] = this.badgeAt(m.arrow);
+          v.marks.appendChild(this.svgText(x, y, '⇄', 'mech-badge flip-badge'));
+          break;
+        }
+        case 'orbit': {
+          const v = this.views[m.arrow];
+          v.g.classList.add('mech-orbit');
+          const [hx, hy] = this.center(headOf(this.state, m.arrow));
+          const ring = document.createElementNS(NS, 'circle');
+          ring.setAttribute('cx', String(hx));
+          ring.setAttribute('cy', String(hy));
+          ring.setAttribute('r', '0.46');
+          ring.setAttribute('class', 'orbit-ring' + (m.cw ? '' : ' ccw'));
+          ring.style.transformOrigin = `${hx}px ${hy}px`;
+          v.marks.appendChild(ring);
+          const [bx, by] = this.badgeAt(m.arrow);
+          v.marks.appendChild(this.svgText(bx, by, m.cw ? '↻' : '↺', 'mech-badge orbit-badge'));
+          break;
+        }
+        case 'vine': {
+          const [ax, ay] = this.badgeAt(m.a);
+          const [bx, by] = this.badgeAt(m.b);
+          // curva levemente arqueada entre o meio das duas setas
+          const mx = (ax + bx) / 2 - (by - ay) * 0.2;
+          const my = (ay + by) / 2 + (bx - ax) * 0.2;
+          const p = document.createElementNS(NS, 'path');
+          p.setAttribute('d', `M${ax} ${ay} Q${mx} ${my} ${bx} ${by}`);
+          p.setAttribute('class', 'vine');
+          this.mechG.appendChild(p);
+          this.vineEls.set(m.a, p);
+          this.vineEls.set(m.b, p);
+          break;
+        }
+        case 'gate': {
+          const sym = GATE_SYMBOLS[gateIdx++ % GATE_SYMBOLS.length];
+          const [cx, cy] = this.center(m.cell);
+          const g = document.createElementNS(NS, 'g');
+          g.setAttribute('class', 'gate');
+          const r = document.createElementNS(NS, 'rect');
+          r.setAttribute('x', String(cx - 0.42));
+          r.setAttribute('y', String(cy - 0.42));
+          r.setAttribute('width', '0.84');
+          r.setAttribute('height', '0.84');
+          r.setAttribute('rx', '0.12');
+          r.setAttribute('class', 'gate-box');
+          g.appendChild(r);
+          for (const dx of [-0.22, 0, 0.22]) {
+            const bar = document.createElementNS(NS, 'line');
+            bar.setAttribute('x1', String(cx + dx));
+            bar.setAttribute('x2', String(cx + dx));
+            bar.setAttribute('y1', String(cy - 0.36));
+            bar.setAttribute('y2', String(cy + 0.36));
+            bar.setAttribute('class', 'gate-bar');
+            g.appendChild(bar);
+          }
+          const label = this.svgText(cx, cy, sym.s, 'gate-symbol');
+          label.setAttribute('fill', sym.c);
+          g.appendChild(label);
+          this.mechG.appendChild(g);
+          this.gateEls.set(m.cell, g);
+          const key = this.views[m.key];
+          const [kx, ky] = this.badgeAt(m.key);
+          const kb = this.svgText(kx, ky, sym.s, 'mech-badge key-badge');
+          kb.setAttribute('fill', sym.c);
+          key.marks.appendChild(kb);
+          key.g.classList.add('mech-key');
+          break;
+        }
+      }
+    }
+    this.refreshBadges();
+  }
+
+  /** Atualiza os números do gelo e do magma */
+  private refreshBadges(): void {
+    const s = this.state;
+    for (const v of this.views) {
+      const id = v.a.id;
+      if (!v.badge) continue;
+      if (s.iceMax[id]) {
+        v.badge.textContent = s.ice[id] > 0 ? `❄${s.ice[id]}` : '';
+        v.g.classList.toggle('frozen', s.ice[id] > 0);
+      } else if (s.magmaMax[id]) {
+        v.badge.textContent = `🔥${s.magma[id]}`;
+        v.g.classList.toggle('magma-hot', s.magma[id] <= 2);
+      }
+    }
   }
 
   private animate(dur: number, fn: (p: number) => void): Promise<void> {
@@ -233,27 +405,68 @@ export class Board {
     }).then(() => parts.forEach((q) => q.el.remove()));
   }
 
+  private flash(el: Element, cls: string, ms: number): void {
+    el.classList.remove(cls);
+    void (el as SVGGraphicsElement).getBBox?.();
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), ms);
+  }
+
   // ---------- regras + animações ----------
-  /** Tenta tirar a seta. Devolve 'exit', 'bump' ou 'ignored' */
-  tap(id: number): 'exit' | 'bump' | 'ignored' {
+  /** Tenta tirar a seta. Devolve o tipo do resultado */
+  tap(id: number): TapResult['kind'] {
     const v = this.views[id];
     if (!v || !v.alive || v.busy || this.locked) return 'ignored';
+    const p = partnerOf(this.state, id);
+    if (p >= 0 && this.views[p].busy) return 'ignored';
     this.clearPreview();
-    const res = checkExit(this.n, this.occ, v.a);
-    if (res.ok) this.exit(v, res.steps);
-    else this.bump(v, res.steps, this.views[res.blocker]);
-    return res.ok ? 'exit' : 'bump';
+    const r = applyTap(this.state, id);
+    if (r.kind === 'ignored') return 'ignored';
+    if (r.kind === 'locked') {
+      this.flash(this.views[r.arrow].g, 'locked-shake', 420);
+    } else if (r.kind === 'bump') {
+      this.bump(this.views[r.arrow], r.steps, r.blocker >= 0 ? this.views[r.blocker] : null, r.gate);
+      this.refreshBadges();
+    } else {
+      for (const e of r.exits) this.exit(this.views[e.id], e.steps);
+      for (const c of r.opened) {
+        const g = this.gateEls.get(c);
+        if (g) {
+          g.classList.add('open');
+          setTimeout(() => g.remove(), 500);
+        }
+      }
+      for (const t of r.turned) this.turn(this.views[t]);
+      for (const m of r.erupted) {
+        this.flash(this.views[m].g, 'erupt', 700);
+        this.flash(this.el, 'quake', 500);
+      }
+      this.refreshBadges();
+    }
+    this.events.onTap(id, r, this.remaining);
+    return r.kind;
+  }
+
+  /** Seta mudou de direção (órbita) ou inverteu (mão dupla): redesenha com um giro rápido */
+  private turn(v: ArrowView): void {
+    this.flash(v.g, 'turning', 300);
+    this.draw(v, this.basePath(v.a.id), 0);
   }
 
   private exit(v: ArrowView, steps: number): void {
     v.alive = false;
-    for (const c of v.a.cells) this.occ[c] = -1;
-    this.removed++;
-    this.events.onExit(v.a, this.remaining);
+    v.marks.style.display = 'none';
+    const vine = this.vineEls.get(v.a.id);
+    if (vine) {
+      vine.classList.add('cut');
+      setTimeout(() => vine.remove(), 300);
+    }
     this.animating++;
-    const P = this.basePath(v.a);
-    const [hr, hc] = [Math.floor(head(v.a) / this.n), head(v.a) % this.n];
-    const [dr, dc] = DIRS[v.a.dir];
+    const id = v.a.id;
+    const P = this.basePath(id);
+    const h = headOf(this.state, id);
+    const [hr, hc] = [Math.floor(h / this.n), h % this.n];
+    const [dr, dc] = DIRS[dirOf(this.state, id)];
     const len = v.a.cells.length;
     for (let j = 1; j <= steps + len + 2; j++) P.push([hc + dc * j + 0.5, hr + dr * j + 0.5]);
     const tEnd = P.length - len;
@@ -272,56 +485,62 @@ export class Board {
     }).then(() => {
       v.g.remove();
       this.animating--;
-      if (this.removed === this.total && this.animating === 0) this.events.onClear();
+      if (this.remaining === 0 && this.animating === 0) this.events.onClear();
     });
   }
 
-  private bump(v: ArrowView, steps: number, blocker: ArrowView): void {
+  private bump(v: ArrowView, steps: number, blocker: ArrowView | null, gateCell: number): void {
     v.busy = true;
-    const P = this.basePath(v.a);
-    const [hr, hc] = [Math.floor(head(v.a) / this.n), head(v.a) % this.n];
-    const [dr, dc] = DIRS[v.a.dir];
+    const id = v.a.id;
+    const P = this.basePath(id);
+    const h = headOf(this.state, id);
+    const [hr, hc] = [Math.floor(h / this.n), h % this.n];
+    const [dr, dc] = DIRS[dirOf(this.state, id)];
     for (let j = 1; j <= steps; j++) P.push([hc + dc * j + 0.5, hr + dr * j + 0.5]);
     const m = Math.max(0.3, steps - 0.62);
     v.g.classList.add('bad');
-    blocker.g.classList.remove('blink');
-    void blocker.g.getBBox();
-    blocker.g.classList.add('blink');
-    this.events.onBump(v.a, blocker.a);
+    if (blocker) this.flash(blocker.g, 'blink', 700);
+    const gate = gateCell >= 0 ? this.gateEls.get(gateCell) : undefined;
+    if (gate) this.flash(gate, 'blink', 700);
     this.animate(380, (p) => this.draw(v, P, m * Math.sin(Math.PI * p))).then(() => {
-      this.draw(v, this.basePath(v.a), 0);
+      this.draw(v, this.basePath(id), 0);
       v.g.classList.remove('bad');
       v.busy = false;
     });
   }
 
-  /** Prévia do caminho: linha tracejada até a borda ou até quem bloqueia */
+  /** Prévia do caminho: linha tracejada até a borda ou até o que bloqueia (com cipó, as duas setas) */
   preview(id: number): void {
     const v = this.views[id];
     if (!v || !v.alive) return;
     this.clearPreview();
-    const res = checkExit(this.n, this.occ, v.a);
-    const [hx, hy] = this.center(head(v.a));
-    const [dy, dx] = DIRS[v.a.dir];
-    const len = res.ok ? res.steps : res.steps - 0.55;
-    const line = document.createElementNS(NS, 'line');
-    line.setAttribute('x1', String(hx + dx * 0.4));
-    line.setAttribute('y1', String(hy + dy * 0.4));
-    line.setAttribute('x2', String(hx + dx * len));
-    line.setAttribute('y2', String(hy + dy * len));
-    line.setAttribute('class', 'preview ' + (res.ok ? 'ok' : 'no'));
-    this.previewG.appendChild(line);
-    if (!res.ok) {
-      const [bx, by] = [hx + dx * res.steps, hy + dy * res.steps];
-      const x = document.createElementNS(NS, 'circle');
-      x.setAttribute('cx', String(bx));
-      x.setAttribute('cy', String(by));
-      x.setAttribute('r', '0.38');
-      x.setAttribute('class', 'preview-block');
-      this.previewG.appendChild(x);
+    const p = partnerOf(this.state, id);
+    let allOk = true;
+    for (const [me, other] of p >= 0 ? [[id, p], [p, id]] : [[id, -1]]) {
+      const res = rayOf(this.state, me, other);
+      allOk = allOk && res.ok;
+      const [hx, hy] = this.center(headOf(this.state, me));
+      const [dy, dx] = DIRS[dirOf(this.state, me)];
+      const len = res.ok ? res.steps : res.steps - 0.55;
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', String(hx + dx * 0.4));
+      line.setAttribute('y1', String(hy + dy * 0.4));
+      line.setAttribute('x2', String(hx + dx * len));
+      line.setAttribute('y2', String(hy + dy * len));
+      line.setAttribute('class', 'preview ' + (res.ok ? 'ok' : 'no'));
+      this.previewG.appendChild(line);
+      if (!res.ok) {
+        const [bx, by] = [hx + dx * res.steps, hy + dy * res.steps];
+        const x = document.createElementNS(NS, 'circle');
+        x.setAttribute('cx', String(bx));
+        x.setAttribute('cy', String(by));
+        x.setAttribute('r', '0.38');
+        x.setAttribute('class', 'preview-block');
+        this.previewG.appendChild(x);
+      }
+      this.views[me].g.classList.add('lifted');
     }
-    v.g.classList.add('lifted');
-    this.events.onPreview?.(v.a, res.ok);
+    this.events.onPreview?.(v.a, allOk && this.state.ice[id] === 0);
   }
 
   clearPreview(): void {
@@ -329,27 +548,35 @@ export class Board {
     for (const v of this.views) v.g.classList.remove('lifted');
   }
 
+  /**
+   * Próxima seta de um caminho que resolve a fase a partir de agora (usa o solver,
+   * que conhece as mecânicas). Se o solver não achar, mostra qualquer seta que sai sem custar vida.
+   */
+  private nextGoodMove(): number {
+    const plan = solveState(this.state, 20000);
+    if (plan?.length) return plan[0];
+    return safeMoves(this.state)[0] ?? -1;
+  }
+
   /** Destaca uma seta que pode sair; devolve qual foi */
   hint(): Arrow | null {
-    const free = freeArrows(this.n, this.occ, this.level.arrows, (id) => this.views[id].alive && !this.views[id].busy);
-    if (!free.length) return null;
-    const a = free[0];
-    const g = this.views[a.id].g;
-    g.classList.remove('hint');
-    void g.getBBox();
-    g.classList.add('hint');
-    setTimeout(() => g.classList.remove('hint'), 2800);
-    return a;
+    if (this.views.some((v) => v.busy)) return null;
+    const id = this.nextGoodMove();
+    if (id < 0) return null;
+    const p = partnerOf(this.state, id);
+    for (const x of p >= 0 ? [id, p] : [id]) this.flash(this.views[x].g, 'hint', 2800);
+    return this.level.arrows[id];
   }
 
   /** Seta livre para o tutorial apontar */
   firstFree(): Arrow | null {
-    return freeArrows(this.n, this.occ, this.level.arrows, (id) => this.views[id].alive)[0] ?? null;
+    const id = safeMoves(this.state)[0];
+    return id === undefined ? null : this.level.arrows[id];
   }
 
   /** Ponto na tela (coordenadas do cliente) sobre a cabeça de uma seta */
   screenPoint(id: number): { x: number; y: number } {
-    const [cx, cy] = this.center(head(this.level.arrows[id]));
+    const [cx, cy] = this.center(headOf(this.state, id));
     const r = this.svg.getBoundingClientRect();
     const k = r.width / (this.n + PAD * 2);
     return { x: r.left + (cx + PAD) * k, y: r.top + (cy + PAD) * k };
@@ -368,7 +595,7 @@ export class Board {
     for (let r2 = r0 - 1; r2 <= r0 + 1; r2++)
       for (let c2 = c0 - 1; c2 <= c0 + 1; c2++) {
         if (r2 < 0 || c2 < 0 || r2 >= this.n || c2 >= this.n) continue;
-        const id = this.occ[r2 * this.n + c2];
+        const id = this.state.occ[r2 * this.n + c2];
         if (id < 0) continue;
         const d = Math.hypot(c2 + 0.5 - x, r2 + 0.5 - y);
         if (d < bestD) {

@@ -1,6 +1,6 @@
 import { mulberry32, shuffle } from './rng';
 import { solve } from './rules';
-import { DIRS, type Arrow, type Dir, type GenerateOptions, type Level, type PackedLevel } from './types';
+import { DIRS, type Arrow, type Dir, type GenerateOptions, type Level, type Mechanic, type PackedLevel } from './types';
 
 /**
  * Gera uma fase SEMPRE solucionável.
@@ -130,14 +130,41 @@ export function paramsFor(t: number, seed: number): GenerateOptions {
 }
 
 export function pack(level: Level): PackedLevel {
-  return [level.n, level.difficulty, level.arrows.map((a) => [a.dir, a.color, ...a.cells])];
+  const arrows = level.arrows.map((a) => [a.dir, a.color, ...a.cells]);
+  if (!level.mechanics?.length) return [level.n, level.difficulty, arrows];
+  return [level.n, level.difficulty, arrows, level.mechanics.map(packMechanic)];
 }
 
 export function unpack(p: PackedLevel): Level {
-  const [n, difficulty, list] = p;
-  return {
+  const [n, difficulty, list, mech] = p as [number, number, number[][], number[][]?];
+  const level: Level = {
     n,
     difficulty,
     arrows: list.map(([dir, color, ...cells], id) => ({ id, dir: dir as Dir, color, cells })),
   };
+  if (mech?.length) level.mechanics = mech.map(unpackMechanic);
+  return level;
+}
+
+function packMechanic(m: Mechanic): number[] {
+  switch (m.type) {
+    case 'ice': return [0, m.arrow, m.count];
+    case 'gate': return [1, m.cell, m.key];
+    case 'vine': return [2, m.a, m.b];
+    case 'flip': return [3, m.arrow];
+    case 'orbit': return [4, m.arrow, m.cw ? 1 : 0];
+    case 'magma': return [5, m.arrow, m.count];
+  }
+}
+
+function unpackMechanic([code, x, y]: number[]): Mechanic {
+  switch (code) {
+    case 0: return { type: 'ice', arrow: x, count: y };
+    case 1: return { type: 'gate', cell: x, key: y };
+    case 2: return { type: 'vine', a: x, b: y };
+    case 3: return { type: 'flip', arrow: x };
+    case 4: return { type: 'orbit', arrow: x, cw: y === 1 };
+    case 5: return { type: 'magma', arrow: x, count: y };
+    default: throw new Error('Mecânica desconhecida no levels.json: ' + code);
+  }
 }

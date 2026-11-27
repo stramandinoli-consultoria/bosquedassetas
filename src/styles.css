@@ -104,6 +104,44 @@ h1, h2, h3 { font-weight: 800; }
 .preview.no { stroke: #ff6b6b; }
 .preview-block { fill: rgba(255, 80, 80, 0.25); stroke: #ff6b6b; stroke-width: 0.06; }
 @keyframes dash { to { stroke-dashoffset: -0.36; } }
+
+/* ---------- mecânicas especiais (src/engine/state.ts) ---------- */
+.mech-badge { font-size: 0.46px; font-weight: 900; paint-order: stroke; stroke: rgba(0, 0, 0, 0.75); stroke-width: 0.08px; fill: #fff; pointer-events: none; }
+/* gelo: camada azul translúcida por cima do corpo enquanto estiver congelada */
+.ice-coat { fill: none; stroke: rgba(190, 235, 255, 0); stroke-width: 0.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.35s; pointer-events: none; }
+.arrow.frozen .ice-coat { stroke: rgba(190, 235, 255, 0.62); }
+.arrow.frozen .body { filter: saturate(0.35) brightness(1.15); }
+.ice-badge { fill: #e8f8ff; }
+/* magma: brilho vermelho pulsando; mais forte quando faltam 2 jogadas */
+.arrow.mech-magma { animation: magma-glow 1.2s ease-in-out infinite alternate; }
+.arrow.magma-hot { animation: magma-glow 0.35s ease-in-out infinite alternate; }
+@keyframes magma-glow { from { filter: drop-shadow(0 0 0.04px #ff5a1f); } to { filter: drop-shadow(0 0 0.22px #ff3b00) brightness(1.15); } }
+.magma-badge { fill: #ffe2c2; }
+.arrow.erupt { animation: erupt 0.7s ease-out; }
+@keyframes erupt { 30% { filter: drop-shadow(0 0 0.5px #ff2a00) brightness(1.8); } }
+.board.quake { animation: shake 0.45s; }
+/* mão dupla e órbita: giro rápido quando a direção muda */
+.flip-badge { fill: #fff59a; }
+.orbit-ring { fill: none; stroke: #e6d8ff; stroke-width: 0.09; stroke-dasharray: 0.55 0.2; filter: drop-shadow(0 0 0.06px #b48cff); animation: orbit-spin 3s linear infinite; pointer-events: none; }
+.orbit-ring.ccw { animation-direction: reverse; stroke: #c4f1ff; filter: drop-shadow(0 0 0.06px #5ad1ff); }
+.orbit-badge { fill: #efe4ff; }
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
+.arrow.turning .head { animation: blink 0.15s 2 alternate; }
+/* cipó: liga as duas setas que saem juntas */
+.vine { fill: none; stroke: #3fae4a; stroke-width: 0.13; stroke-linecap: round; stroke-dasharray: 0.28 0.1; filter: drop-shadow(0 0.03px 0 rgba(0, 0, 0, 0.5)); transition: opacity 0.3s; pointer-events: none; }
+.vine.cut { opacity: 0; }
+/* portões e chaves */
+.gate-box { fill: rgba(40, 34, 30, 0.82); stroke: #c9b48a; stroke-width: 0.06; }
+.gate-bar { stroke: #c9b48a; stroke-width: 0.07; stroke-linecap: round; }
+.gate-symbol { font-size: 0.5px; font-weight: 900; paint-order: stroke; stroke: #1a1410; stroke-width: 0.1px; }
+.gate { transition: transform 0.45s, opacity 0.45s; transform-box: fill-box; transform-origin: center; }
+.gate.open { transform: translateY(-0.6px); opacity: 0; }
+.gate.blink { animation: blink 0.2s 3 alternate; }
+.key-badge { font-size: 0.62px; stroke-width: 0.12px; }
+/* toque numa seta travada (gelo): treme sem tirar vida */
+.arrow.locked-shake { animation: locked-shake 0.4s; }
+@keyframes locked-shake { 25% { transform: translateX(-0.08px); } 50% { transform: translateX(0.08px); } 75% { transform: translateX(-0.04px); } }
+.tutorial.mech-intro b { display: block; margin-bottom: 4px; }
 .game-footer { display: flex; justify-content: center; gap: 14px; padding-top: 6px; }
 .tool { position: relative; width: 62px; height: 56px; border-radius: 18px; background: var(--glass); font-size: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .tool small { font-size: 10px; font-weight: 800; }
