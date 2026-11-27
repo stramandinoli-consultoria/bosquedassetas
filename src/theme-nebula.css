@@ -1,0 +1,94 @@
+/*
+ * Tema da nebulosa (mundo 14 "Nebulosa", fases 261–280, e as voltas seguintes: Nebulosa II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Nebulosa.png" -> src/assets/nebula/
+ *
+ * Ativado por <body data-theme="nebula">, que App.setBackground() define conforme o mundo.
+ * O kit tem fundo escuro e peças com brilho; por isso o recorte usa transparência suave,
+ * como no tema da galáxia (o brilho em volta das peças fica translúcido).
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada).
+ * O ícone dos botões começa cedo, então a ponta aqui tem 12px.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='nebula'] .heart { background-image: url('./assets/nebula/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (456x99); o vão interno vai de x 30 a 335 e de y 40 a 74.
+   A ponta da esquerda (32px) e a galáxia em espiral da direita (125px) ficam inteiras. */
+body[data-theme='nebula'] .progress::before {
+  border-width: 0 42px 0 11px;
+  border-image: url('./assets/nebula/bar.png') 0 125 0 32 fill / 0 42px 0 11px stretch;
+}
+body[data-theme='nebula'] .progress .track { left: 10px; right: 41px; top: 14px; bottom: 8px; }
+
+/* ---------- tabuleiro: moldura cósmica com a galáxia no alto e o painel de pedra ---------- */
+body[data-theme='nebula'] .board { background-image: url('./assets/nebula/frame.png'); }
+/* área interna da moldura (medida no frame.png: 495x445; painel de pedra de x 67 a 430 e de y 80 a 393) */
+body[data-theme='nebula'] .board-clip { top: 18.5%; right: 13.5%; bottom: 12%; left: 14%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='nebula'] .tool-hint { width: 60px; height: 60px; background-image: url('./assets/nebula/btn-hint.png'); }
+body[data-theme='nebula'] .tool-restart { width: 60px; height: 47px; background-image: url('./assets/nebula/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='nebula'] .tool-hint .badge { top: 0; left: 39px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='nebula'] .modal { background: rgba(24, 6, 40, 0.7); }
+body[data-theme='nebula'] .modal-card {
+  border-width: 41px 28px 24px 29px;
+  border-image: url('./assets/nebula/frame.png') 98 66 56 68 fill / 41px 28px 24px 29px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='nebula'] .topbar > .icon-btn:first-child { background-image: url('./assets/nebula/btn-back.png'); }
+body[data-theme='nebula'] .icon-btn.wood-gear { background-image: url('./assets/nebula/btn-gear.png'); }
+
+body[data-theme='nebula'] .btn-alt,
+body[data-theme='nebula'] .btn-shop,
+body[data-theme='nebula'] .btn-rank,
+body[data-theme='nebula'] .btn-danger,
+body[data-theme='nebula'] .btn-daily,
+body[data-theme='nebula'] .btn-play {
+  /* 12 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 24 12 26 fill;
+  border-image-width: 17px 8px 19px;
+}
+body[data-theme='nebula'] .btn-alt { border-image-source: url('./assets/nebula/btn-blue.png'); }
+body[data-theme='nebula'] .btn-shop { border-image-source: url('./assets/nebula/btn-cyan.png'); }
+body[data-theme='nebula'] .btn-rank,
+body[data-theme='nebula'] .btn-danger { border-image-source: url('./assets/nebula/btn-red.png'); }
+body[data-theme='nebula'] .btn-daily { border-image-source: url('./assets/nebula/btn-purple.png'); }
+body[data-theme='nebula'] .btn-play { border-image-source: url('./assets/nebula/btn-yellow.png'); }
+body[data-theme='nebula'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 6px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da nebulosa, as peças da nebulosa nunca aparecem */
+body:not([data-theme='nebula']) .forest-decor .nebula-only { display: none; }
+/* na nebulosa, somem as peças dos outros temas (os vaga-lumes viram poeira de nebulosa) */
+body[data-theme='nebula'] .forest-decor > div:not(.nebula-only):not(.firefly) { display: none; }
+
+body[data-theme='nebula'] .deco-crystals { left: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 181 / 161;
+  background-image: url('./assets/nebula/crystals.png'); }
+body[data-theme='nebula'] .deco-alien-plants { right: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 176 / 135;
+  background-image: url('./assets/nebula/plants.png'); }
+
+/* tela inicial: rochas flutuantes no lugar dos cristais, asteroides e um planeta com anéis passando no alto */
+body[data-theme='nebula'][data-screen='home'] .deco-crystals { display: none; }
+body[data-theme='nebula'] .deco-rocks { left: -10px; bottom: -6px; width: min(28vw, 126px); aspect-ratio: 156 / 127;
+  background-image: url('./assets/nebula/rocks.png'); }
+body[data-theme='nebula'] .deco-asteroids { left: 2%; top: 14%; width: min(18vw, 80px); aspect-ratio: 147 / 119;
+  background-image: url('./assets/nebula/asteroids.png'); opacity: 0.85; animation: nebula-float 14s ease-in-out -5s infinite alternate-reverse; }
+body[data-theme='nebula'] .deco-planet { right: -14px; top: 13%; width: min(30vw, 134px); aspect-ratio: 184 / 117;
+  background-image: url('./assets/nebula/planet.png'); opacity: 0.9; animation: nebula-float 12s ease-in-out infinite alternate; }
+
+@keyframes nebula-float {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-14px, 10px) rotate(-4deg); }
+}
+
+/* poeira rosa e azul da nebulosa no lugar dos vaga-lumes */
+body[data-theme='nebula'] .forest-decor .firefly {
+  width: 4px; height: 4px; background: #fff0fb;
+  box-shadow: 0 0 6px 2px rgba(255, 140, 230, 0.85), 0 0 14px 5px rgba(120, 160, 255, 0.35);
+}

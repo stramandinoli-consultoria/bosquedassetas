@@ -1,0 +1,96 @@
+/*
+ * Tema da galáxia (mundo 13 "Galáxia", fases 241–260, e as voltas seguintes: Galáxia II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Galáxia.png" -> src/assets/galaxy/
+ *
+ * Ativado por <body data-theme="galaxy">, que App.setBackground() define conforme o mundo.
+ * O kit tem fundo escuro e peças com brilho; por isso o recorte usa transparência suave
+ * (o brilho em volta das peças fica translúcido em vez de virar uma mancha escura).
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada).
+ * Os botões são pequenos e o ícone começa cedo, então a ponta aqui tem 10px.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='galaxy'] .heart { background-image: url('./assets/galaxy/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (339x88); o vão interno vai de x 28 a 264 e de y 36 a 66.
+   A estrela da esquerda (30px) e o planeta da direita (76px) ficam inteiros. */
+body[data-theme='galaxy'] .progress::before {
+  border-width: 0 29px 0 12px;
+  border-image: url('./assets/galaxy/bar.png') 0 76 0 30 fill / 0 29px 0 12px stretch;
+}
+body[data-theme='galaxy'] .progress .track { left: 11px; right: 29px; top: 14px; bottom: 8px; }
+
+/* ---------- tabuleiro: moldura de pedra cósmica com o pergaminho ---------- */
+body[data-theme='galaxy'] .board { background-image: url('./assets/galaxy/frame.png'); }
+/* área interna da moldura (medida no frame.png: 424x436; pergaminho de x 75 a 351 e de y 69 a 381) */
+body[data-theme='galaxy'] .board-clip { top: 16.5%; right: 17.5%; bottom: 13%; left: 18.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='galaxy'] .tool-hint { width: 58px; height: 65px; background-image: url('./assets/galaxy/btn-hint.png'); }
+body[data-theme='galaxy'] .tool-restart { width: 60px; height: 58px; background-image: url('./assets/galaxy/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='galaxy'] .tool-hint .badge { top: 0; left: 38px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='galaxy'] .modal { background: rgba(8, 4, 30, 0.7); }
+body[data-theme='galaxy'] .modal-card {
+  border-width: 29px 31px 23px 32px;
+  border-image: url('./assets/galaxy/frame.png') 70 73 55 76 fill / 29px 31px 23px 32px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='galaxy'] .topbar > .icon-btn:first-child { background-image: url('./assets/galaxy/btn-back.png'); }
+body[data-theme='galaxy'] .icon-btn.wood-gear { background-image: url('./assets/galaxy/btn-gear.png'); }
+
+body[data-theme='galaxy'] .btn-alt,
+body[data-theme='galaxy'] .btn-shop,
+body[data-theme='galaxy'] .btn-rank,
+body[data-theme='galaxy'] .btn-danger,
+body[data-theme='galaxy'] .btn-daily,
+body[data-theme='galaxy'] .btn-play {
+  /* 10 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 22 10 25 fill;
+  border-image-width: 16px 7px 18px;
+}
+body[data-theme='galaxy'] .btn-alt { border-image-source: url('./assets/galaxy/btn-blue.png'); }
+body[data-theme='galaxy'] .btn-shop { border-image-source: url('./assets/galaxy/btn-cyan.png'); }
+body[data-theme='galaxy'] .btn-rank,
+body[data-theme='galaxy'] .btn-danger { border-image-source: url('./assets/galaxy/btn-red.png'); }
+body[data-theme='galaxy'] .btn-daily { border-image-source: url('./assets/galaxy/btn-purple.png'); }
+body[data-theme='galaxy'] .btn-play { border-image-source: url('./assets/galaxy/btn-yellow.png'); }
+body[data-theme='galaxy'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 11px 5px 12px; }
+
+/* ---------- cenário ---------- */
+/* fora da galáxia, as peças da galáxia nunca aparecem */
+body:not([data-theme='galaxy']) .forest-decor .galaxy-only { display: none; }
+/* na galáxia, somem as peças dos outros temas (os vaga-lumes viram estrelas piscando) */
+body[data-theme='galaxy'] .forest-decor > div:not(.galaxy-only):not(.firefly) { display: none; }
+
+body[data-theme='galaxy'] .deco-crystals { left: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 202 / 156;
+  background-image: url('./assets/galaxy/crystals.png'); }
+body[data-theme='galaxy'] .deco-alien-plants { right: -12px; bottom: -6px; width: min(34vw, 150px); aspect-ratio: 293 / 187;
+  background-image: url('./assets/galaxy/mushrooms.png'); }
+/* tela inicial: planetas flutuando devagar no alto, à direita */
+body[data-theme='galaxy'] .deco-planets { right: -14px; top: 13%; width: min(30vw, 134px); aspect-ratio: 250 / 159;
+  background-image: url('./assets/galaxy/planets.png'); opacity: 0.85; animation: galaxy-float 12s ease-in-out infinite alternate; }
+
+/* tela inicial: portal estelar e alienígenas no lugar dos cristais e das plantas */
+body[data-theme='galaxy'][data-screen='home'] .deco-crystals,
+body[data-theme='galaxy'][data-screen='home'] .deco-alien-plants { display: none; }
+body[data-theme='galaxy'] .deco-portal { left: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 223 / 211;
+  background-image: url('./assets/galaxy/portal.png'); }
+body[data-theme='galaxy'] .deco-aliens { right: -8px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 225 / 160;
+  background-image: url('./assets/galaxy/aliens.png'); }
+
+@keyframes galaxy-float {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-14px, 10px) rotate(-4deg); }
+}
+
+/* estrelas piscando no lugar dos vaga-lumes */
+body[data-theme='galaxy'] .forest-decor .firefly {
+  width: 4px; height: 4px; background: #ffffff;
+  box-shadow: 0 0 6px 2px rgba(190, 210, 255, 0.9), 0 0 14px 5px rgba(170, 120, 255, 0.35);
+}

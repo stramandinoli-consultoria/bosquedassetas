@@ -29,8 +29,8 @@ export const CONFIG = {
   },
 } as const;
 
-/** Conjunto de imagens usado no mundo (ver theme-forest.css, theme-beach.css, theme-desert.css, theme-glacier.css, theme-volcano.css, theme-city.css, theme-jungle.css, theme-canyon.css, theme-ocean.css e theme-mountain.css). Sem "theme" = floresta. */
-export type Theme = 'forest' | 'beach' | 'desert' | 'glacier' | 'volcano' | 'city' | 'jungle' | 'canyon' | 'ocean' | 'mountain';
+/** Conjunto de imagens usado no mundo (ver theme-forest.css, theme-beach.css, theme-desert.css, theme-glacier.css, theme-volcano.css, theme-city.css, theme-jungle.css, theme-canyon.css, theme-ocean.css, theme-mountain.css, theme-aurora.css, theme-castle.css, theme-galaxy.css, theme-nebula.css, theme-infinity.css e theme-multiverse.css). Sem "theme" = floresta. */
+export type Theme = 'forest' | 'beach' | 'desert' | 'glacier' | 'volcano' | 'city' | 'jungle' | 'canyon' | 'ocean' | 'mountain' | 'aurora' | 'castle' | 'galaxy' | 'nebula' | 'infinity' | 'multiverse';
 
 export const WORLDS: { name: { pt: string; en: string }; bg: [string, string]; theme?: Theme }[] = [
   { name: { pt: 'Bosque', en: 'Grove' }, bg: ['#1f5f4a', '#0d2b24'] },
@@ -43,9 +43,15 @@ export const WORLDS: { name: { pt: string; en: string }; bg: [string, string]; t
   { name: { pt: 'Cânion', en: 'Canyon' }, bg: ['#b8743a', '#40200e'], theme: 'canyon' },
   { name: { pt: 'Oceano', en: 'Ocean' }, bg: ['#1f5fa8', '#08203f'], theme: 'ocean' },
   { name: { pt: 'Montanha', en: 'Mountain' }, bg: ['#5f6f8f', '#1b2233'], theme: 'mountain' },
-  { name: { pt: 'Aurora', en: 'Aurora' }, bg: ['#3aa88f', '#0d2333'] },
-  { name: { pt: 'Castelo', en: 'Castle' }, bg: ['#7a4fa8', '#22113a'] },
-  { name: { pt: 'Galáxia', en: 'Galaxy' }, bg: ['#4f3aa8', '#0b0820'] },
-  { name: { pt: 'Nebulosa', en: 'Nebula' }, bg: ['#a83a8f', '#2a0b25'] },
-  { name: { pt: 'Infinito', en: 'Infinity' }, bg: ['#333a4f', '#0a0c12'] },
+  { name: { pt: 'Aurora', en: 'Aurora' }, bg: ['#3aa88f', '#0d2333'], theme: 'aurora' },
+  { name: { pt: 'Castelo', en: 'Castle' }, bg: ['#7a4fa8', '#22113a'], theme: 'castle' },
+  { name: { pt: 'Galáxia', en: 'Galaxy' }, bg: ['#4f3aa8', '#0b0820'], theme: 'galaxy' },
+  { name: { pt: 'Nebulosa', en: 'Nebula' }, bg: ['#a83a8f', '#2a0b25'], theme: 'nebula' },
+  { name: { pt: 'Infinito', en: 'Infinity' }, bg: ['#333a4f', '#0a0c12'], theme: 'infinity' },
 ];
+
+/**
+ * Depois do último mundo (Infinito, fase 300) os nomes recomeçam (Bosque II, Praia II…),
+ * mas as imagens ficam sempre no tema do multiverso (theme-multiverse.css).
+ */
+export const BEYOND: { bg: [string, string]; theme: Theme } = { bg: ['#5a3aa8', '#0a0420'], theme: 'multiverse' };
