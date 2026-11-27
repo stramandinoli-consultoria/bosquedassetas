@@ -29,8 +29,8 @@ export const CONFIG = {
   },
 } as const;
 
-/** Conjunto de imagens usado no mundo (ver theme-forest.css, theme-beach.css, theme-desert.css, theme-glacier.css, theme-volcano.css, theme-city.css, theme-jungle.css, theme-canyon.css e theme-ocean.css). Sem "theme" = floresta. */
-export type Theme = 'forest' | 'beach' | 'desert' | 'glacier' | 'volcano' | 'city' | 'jungle' | 'canyon' | 'ocean';
+/** Conjunto de imagens usado no mundo (ver theme-forest.css, theme-beach.css, theme-desert.css, theme-glacier.css, theme-volcano.css, theme-city.css, theme-jungle.css, theme-canyon.css, theme-ocean.css e theme-mountain.css). Sem "theme" = floresta. */
+export type Theme = 'forest' | 'beach' | 'desert' | 'glacier' | 'volcano' | 'city' | 'jungle' | 'canyon' | 'ocean' | 'mountain';
 
 export const WORLDS: { name: { pt: string; en: string }; bg: [string, string]; theme?: Theme }[] = [
   { name: { pt: 'Bosque', en: 'Grove' }, bg: ['#1f5f4a', '#0d2b24'] },
@@ -42,7 +42,7 @@ export const WORLDS: { name: { pt: string; en: string }; bg: [string, string]; t
   { name: { pt: 'Selva', en: 'Jungle' }, bg: ['#3a8f3a', '#0f2b10'], theme: 'jungle' },
   { name: { pt: 'Cânion', en: 'Canyon' }, bg: ['#b8743a', '#40200e'], theme: 'canyon' },
   { name: { pt: 'Oceano', en: 'Ocean' }, bg: ['#1f5fa8', '#08203f'], theme: 'ocean' },
-  { name: { pt: 'Montanha', en: 'Mountain' }, bg: ['#5f6f8f', '#1b2233'] },
+  { name: { pt: 'Montanha', en: 'Mountain' }, bg: ['#5f6f8f', '#1b2233'], theme: 'mountain' },
   { name: { pt: 'Aurora', en: 'Aurora' }, bg: ['#3aa88f', '#0d2333'] },
   { name: { pt: 'Castelo', en: 'Castle' }, bg: ['#7a4fa8', '#22113a'] },
   { name: { pt: 'Galáxia', en: 'Galaxy' }, bg: ['#4f3aa8', '#0b0820'] },

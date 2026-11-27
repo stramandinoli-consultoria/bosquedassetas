@@ -1,0 +1,89 @@
+/*
+ * Tema da montanha (mundo 10 "Montanha", fases 181–200, e as voltas seguintes: Montanha II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Montanha.png" -> src/assets/mountain/
+ *
+ * Ativado por <body data-theme="mountain">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada), como no tema do oceano.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='mountain'] .heart { background-image: url('./assets/mountain/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (436x101); o vão interno vai de x 40 a 384 e de y 40 a 68.
+   As flores da esquerda (42px) e a pinha da direita (60px) ficam inteiras. */
+body[data-theme='mountain'] .progress::before {
+  border-width: 0 20px 0 14px;
+  border-image: url('./assets/mountain/bar.png') 0 60 0 42 fill / 0 20px 0 14px stretch;
+}
+body[data-theme='mountain'] .progress .track { left: 14px; right: 17px; top: 14px; bottom: 11px; }
+
+/* ---------- tabuleiro: moldura de pedra com flores, musgo e pinhas ---------- */
+body[data-theme='mountain'] .board { background-image: url('./assets/mountain/frame.png'); }
+/* área interna da moldura (medida no frame.png: 506x469; painel de pedra de x 60 a 448 e de y 66 a 424) */
+body[data-theme='mountain'] .board-clip { top: 14.5%; right: 12%; bottom: 10.5%; left: 12.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='mountain'] .tool-hint { width: 60px; height: 56px; background-image: url('./assets/mountain/btn-hint.png'); }
+body[data-theme='mountain'] .tool-restart { width: 60px; height: 52px; background-image: url('./assets/mountain/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='mountain'] .tool-hint .badge { top: 0; left: 37px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='mountain'] .modal { background: rgba(14, 26, 40, 0.66); }
+body[data-theme='mountain'] .modal-card {
+  border-width: 30px 26px 20px 27px;
+  border-image: url('./assets/mountain/frame.png') 66 58 45 60 fill / 30px 26px 20px 27px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='mountain'] .topbar > .icon-btn:first-child { background-image: url('./assets/mountain/btn-back.png'); }
+body[data-theme='mountain'] .icon-btn.wood-gear { background-image: url('./assets/mountain/btn-gear.png'); }
+
+body[data-theme='mountain'] .btn-alt,
+body[data-theme='mountain'] .btn-shop,
+body[data-theme='mountain'] .btn-rank,
+body[data-theme='mountain'] .btn-danger,
+body[data-theme='mountain'] .btn-daily,
+body[data-theme='mountain'] .btn-play {
+  /* 17 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 26 17 28 fill;
+  border-image-width: 18px 12px 20px;
+}
+body[data-theme='mountain'] .btn-alt { border-image-source: url('./assets/mountain/btn-blue.png'); }
+body[data-theme='mountain'] .btn-shop { border-image-source: url('./assets/mountain/btn-cyan.png'); }
+body[data-theme='mountain'] .btn-rank,
+body[data-theme='mountain'] .btn-danger { border-image-source: url('./assets/mountain/btn-red.png'); }
+body[data-theme='mountain'] .btn-daily { border-image-source: url('./assets/mountain/btn-purple.png'); }
+body[data-theme='mountain'] .btn-play { border-image-source: url('./assets/mountain/btn-yellow.png'); }
+body[data-theme='mountain'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da montanha, as peças da montanha nunca aparecem */
+body:not([data-theme='mountain']) .forest-decor .mountain-only { display: none; }
+/* na montanha, somem as peças dos outros temas (os vaga-lumes viram pólen dourado) */
+body[data-theme='mountain'] .forest-decor > div:not(.mountain-only):not(.firefly) { display: none; }
+
+body[data-theme='mountain'] .deco-rocks { left: -10px; bottom: -6px; width: min(28vw, 126px); aspect-ratio: 162 / 121;
+  background-image: url('./assets/mountain/rocks-big.png'); }
+body[data-theme='mountain'] .deco-lupine { left: calc(min(28vw, 126px) - 26px); bottom: -6px; width: min(12vw, 54px); aspect-ratio: 70 / 121;
+  background-image: url('./assets/mountain/lupine.png'); }
+body[data-theme='mountain'] .deco-pines { right: -12px; bottom: -6px; width: min(30vw, 136px); aspect-ratio: 187 / 145;
+  background-image: url('./assets/mountain/pines.png'); }
+body[data-theme='mountain'] .deco-flowers { right: calc(min(30vw, 136px) - 30px); bottom: -6px; width: min(24vw, 108px); aspect-ratio: 162 / 110;
+  background-image: url('./assets/mountain/flowers.png'); }
+
+/* tela inicial: edelvais e pinhas no lugar das flores e dos tremoços */
+body[data-theme='mountain'][data-screen='home'] .deco-lupine,
+body[data-theme='mountain'][data-screen='home'] .deco-flowers { display: none; }
+body[data-theme='mountain'] .deco-edelweiss { right: calc(min(30vw, 136px) - 24px); bottom: -6px; width: min(16vw, 72px); aspect-ratio: 97 / 119;
+  background-image: url('./assets/mountain/edelweiss.png'); }
+body[data-theme='mountain'] .deco-pinecones { left: calc(min(28vw, 126px) - 30px); bottom: -4px; width: min(20vw, 90px); aspect-ratio: 140 / 80;
+  background-image: url('./assets/mountain/pinecones.png'); }
+
+/* pólen dourado no lugar dos vaga-lumes (como as luzes do kit) */
+body[data-theme='mountain'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #fff6c0;
+  box-shadow: 0 0 6px 2px rgba(255, 230, 120, 0.85), 0 0 16px 5px rgba(255, 210, 80, 0.3);
+}

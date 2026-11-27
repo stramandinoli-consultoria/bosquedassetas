@@ -9,6 +9,7 @@ import './theme-city.css';
 import './theme-jungle.css';
 import './theme-canyon.css';
 import './theme-ocean.css';
+import './theme-mountain.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -35,6 +36,7 @@ import { shopScreen } from './ui/shop';
  *  - selva ("jungle-only"): ruínas, folhagem, flores tropicais, tucano e pedras com musgo (theme-jungle.css)
  *  - cânion ("canyon-only"): cacto alto, arco de pedra, formação rochosa, palma com flores, crânio e cachoeira (theme-canyon.css)
  *  - oceano ("ocean-only"): templo submerso, alga, corais, concha e peixes (theme-ocean.css)
+ *  - montanha ("mountain-only"): pedras com musgo, tremoços, pinheiros, flores, edelvais e pinhas (theme-mountain.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -98,6 +100,12 @@ function addForestDecor() {
     'ocean-only deco-clownfish',
     'ocean-only home-only deco-shell',
     'ocean-only home-only deco-angelfish',
+    'mountain-only deco-rocks',
+    'mountain-only deco-lupine',
+    'mountain-only deco-pines',
+    'mountain-only deco-flowers',
+    'mountain-only home-only deco-edelweiss',
+    'mountain-only home-only deco-pinecones',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
