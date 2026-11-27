@@ -1,5 +1,8 @@
 import { t } from '../i18n';
 import logoUrl from '../assets/atlas/logo.png';
+import forestLogoUrl from '../assets/forest/logo.webp';
+import beachLogoUrl from '../assets/beach/logo.webp';
+import type { Theme } from '../config';
 import { coinPill, h, icon, type IconName, modal } from './dom';
 import type { App, Screen } from './app';
 import { openSettings } from './settings';
@@ -9,6 +12,15 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredInstall = e;
 });
+
+/**
+ * Logo da tela inicial por tema (o tema vem do mundo da próxima fase, ver App.setBackground).
+ * Tema sem logo próprio usa o logo do atlas.
+ */
+const THEME_LOGO: Partial<Record<Theme, { src: string; alt: string; cls: string }>> = {
+  forest: { src: forestLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-tall' },
+  beach: { src: beachLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-wide' },
+};
 
 function isIosSafari(): boolean {
   const ua = navigator.userAgent;
@@ -61,7 +73,13 @@ export function homeScreen(app: App): Screen {
     ),
   );
 
-  const logo = h('img', { class: 'logo-img', src: logoUrl, alt: 'Bosque das Setas', draggable: 'false' });
+  const themed = THEME_LOGO[document.body.dataset.theme as Theme];
+  const logo = h('img', {
+    class: themed?.cls ?? 'logo-img',
+    src: themed?.src ?? logoUrl,
+    alt: themed?.alt ?? 'Bosque das Setas',
+    draggable: 'false',
+  });
   const el = h('div', { class: 'screen home' }, top, h('div', { class: 'logo' }, logo), buttons);
 
   if (app.s.platform === 'web' && !isStandalone() && (deferredInstall || isIosSafari())) {
