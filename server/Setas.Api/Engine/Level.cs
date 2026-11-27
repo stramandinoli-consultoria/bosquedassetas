@@ -6,7 +6,16 @@ public sealed record Arrow(int Id, int[] Cells, int Dir, int Color)
     public int Head => Cells[^1];
 }
 
-public sealed record Level(int N, IReadOnlyList<Arrow> Arrows);
+/// <summary>
+/// Mecânica especial (src/engine/types.ts). Códigos do levels.json:
+/// 0 gelo [seta, contador] · 1 portão [célula, chave] · 2 cipó [a, b] · 3 mão dupla [seta] · 4 órbita [seta, horário] · 5 magma [seta, contador]
+/// </summary>
+public sealed record Mechanic(int Code, int X, int Y)
+{
+    public const int Ice = 0, Gate = 1, Vine = 2, Flip = 3, Orbit = 4, Magma = 5;
+}
+
+public sealed record Level(int N, IReadOnlyList<Arrow> Arrows, IReadOnlyList<Mechanic>? Mechanics = null);
 
 public readonly record struct ExitResult(bool Ok, int Steps, int Blocker);
 

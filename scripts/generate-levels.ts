@@ -12,6 +12,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generate, pack, paramsFor } from '../src/engine/generator';
+import { overlayFor } from '../src/engine/overlay';
 import { solve } from '../src/engine/rules';
 import type { Level } from '../src/engine/types';
 
@@ -68,11 +69,14 @@ for (let w = 0; w < all.length; w += WORLD_SIZE) {
 const here = dirname(fileURLToPath(import.meta.url));
 const out = resolve(here, '../src/data/levels.json');
 mkdirSync(dirname(out), { recursive: true });
-writeFileSync(out, JSON.stringify(byDifficulty.map(pack)));
+// mecânicas especiais por cima das setas (caminho A de docs/novas-mecanicas-de-dificuldades.md)
+const withMechanics = byDifficulty.map((l, i) => overlayFor(l, i));
+writeFileSync(out, JSON.stringify(withMechanics.map(pack)));
 // o servidor usa as mesmas fases para conferir as partidas
 const serverCopy = resolve(here, '../server/Setas.Api/Data/levels.json');
 mkdirSync(dirname(serverCopy), { recursive: true });
-writeFileSync(serverCopy, JSON.stringify(byDifficulty.map(pack)));
+writeFileSync(serverCopy, JSON.stringify(withMechanics.map(pack)));
+console.log(`Fases com mecânica: ${withMechanics.filter((l) => l.mechanics?.length).length}`);
 
 const sizes = byDifficulty.map((l) => l.n);
 console.log(`Fases: ${byDifficulty.length} (banco de ${pool.length})`);
