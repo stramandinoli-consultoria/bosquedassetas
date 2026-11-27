@@ -5,7 +5,7 @@
  * de teste e nunca geram cobrança nem bloqueio de conta.
  */
 export const CONFIG = {
-  appName: 'Setas!',
+  appName: 'Mundo das Setas',
   worldSize: 20,
   startingHints: 5,
   lives: 3,

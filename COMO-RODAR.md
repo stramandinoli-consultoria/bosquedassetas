@@ -1,4 +1,4 @@
-# Como rodar o projeto (Setas! — Puzzle Escape)
+# Como rodar o projeto (Mundo das Setas)
 
 Guia rápido para rodar o jogo no seu computador (Windows).
 

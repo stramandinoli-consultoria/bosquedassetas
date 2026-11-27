@@ -1,4 +1,4 @@
-# Colocar o Setas! no Railway
+# Colocar o Mundo das Setas no Railway
 
 > **Atualizado em:** 27/11/2026 às 19:28 (horário de Brasília, UTC−3). Entraram o `railway.json`, a variável `PORT` e o comando seguro para gerar o `JWT_SECRET`. O passo a passo foi conferido simulando o contêiner em modo Production.
 

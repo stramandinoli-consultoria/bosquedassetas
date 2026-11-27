@@ -96,7 +96,7 @@ export function openSettings(app: App): void {
         ),
       h('button', { class: 'btn', onclick: () => m.close() }, t('close')),
       resetBtn,
-      h('p', { class: 'version' }, `Setas! v2.0 · ${app.s.platform}`),
+      h('p', { class: 'version' }, `Mundo das Setas v2.0 · ${app.s.platform}`),
       // créditos: empresa (com link) e desenvolvedor
       h(
         'p',

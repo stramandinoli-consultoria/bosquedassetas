@@ -2,7 +2,7 @@
   "name": "setas-puzzle",
   "version": "2.0.0",
   "private": true,
-  "description": "Setas! — puzzle de tirar setas do tabuleiro (web, PWA, Android e iOS)",
+  "description": "Mundo das Setas — puzzle de tirar setas do tabuleiro (web, PWA, Android e iOS)",
   "author": "Strcore (https://strcore.com.br/) - Carlos Eduardo Stramandinoli",
   "type": "module",
   "engines": {

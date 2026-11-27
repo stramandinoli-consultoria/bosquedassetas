@@ -6,7 +6,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
  */
 const config: CapacitorConfig = {
   appId: 'br.com.stramandinoli.setas',
-  appName: 'Setas!',
+  appName: 'Mundo das Setas',
   webDir: 'dist',
   backgroundColor: '#0d1b2e',
   android: {

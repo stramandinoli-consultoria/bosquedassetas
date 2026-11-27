@@ -4,7 +4,7 @@
  * na hora e atualiza em segundo plano.
  * Mude CACHE ao publicar uma versão com mudanças grandes.
  */
-const CACHE = 'setas-v5';
+const CACHE = 'setas-v6';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html', './manifest.webmanifest'])).then(() => self.skipWaiting()));

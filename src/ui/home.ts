@@ -103,7 +103,7 @@ export function homeScreen(app: App): Screen {
   const logo = h('img', {
     class: themed?.cls ?? 'logo-img',
     src: themed?.src ?? logoUrl,
-    alt: themed?.alt ?? 'Bosque das Setas',
+    alt: themed?.alt ?? 'Mundo das Setas',
     draggable: 'false',
   });
   const el = h('div', { class: 'screen home' }, top, h('div', { class: 'logo' }, logo), buttons);

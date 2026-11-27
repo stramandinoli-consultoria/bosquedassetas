@@ -1,4 +1,4 @@
-# Setas! — Puzzle Escape (v2)
+# Mundo das Setas (v2)
 
 Puzzle de tirar setas do tabuleiro. Toque numa seta e ela sai na direção em que aponta; se bater em outra, você perde uma vida.
 
