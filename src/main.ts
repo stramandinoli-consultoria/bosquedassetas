@@ -7,6 +7,7 @@ import './theme-glacier.css';
 import './theme-volcano.css';
 import './theme-city.css';
 import './theme-jungle.css';
+import './theme-canyon.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -31,6 +32,7 @@ import { shopScreen } from './ui/shop';
  *  - vulcão ("volcano-only"): rochas com lava, vulcãozinho, árvore seca com cristais, coluna e poça de lava e brasas (theme-volcano.css)
  *  - cidade ("city-only"): prédios, árvore no vaso, floreira e hidrante, semáforo, banco e luzes (theme-city.css)
  *  - selva ("jungle-only"): ruínas, folhagem, flores tropicais, tucano e pedras com musgo (theme-jungle.css)
+ *  - cânion ("canyon-only"): cacto alto, arco de pedra, formação rochosa, palma com flores, crânio e cachoeira (theme-canyon.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -82,6 +84,12 @@ function addForestDecor() {
     'jungle-only deco-foliage',
     'jungle-only home-only deco-toucan',
     'jungle-only home-only deco-mossy-rocks',
+    'canyon-only deco-saguaro',
+    'canyon-only deco-arch',
+    'canyon-only deco-butte',
+    'canyon-only deco-pear',
+    'canyon-only home-only deco-skull',
+    'canyon-only home-only deco-waterfall',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
