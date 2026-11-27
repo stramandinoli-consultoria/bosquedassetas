@@ -1,0 +1,95 @@
+/*
+ * Tema do oceano (mundo 9 "Oceano", fases 161–180, e as voltas seguintes: Oceano II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase oceano.png" -> src/assets/ocean/
+ *
+ * Ativado por <body data-theme="ocean">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada), como no tema da selva.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='ocean'] .heart { background-image: url('./assets/ocean/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (433x90); o vão interno vai de x 54 a 384 e de y 40 a 65.
+   Os corais e a concha da esquerda (56px) e a estrela da direita (50px) ficam inteiros. */
+body[data-theme='ocean'] .progress::before {
+  border-width: 0 19px 0 21px;
+  border-image: url('./assets/ocean/bar.png') 0 50 0 56 fill / 0 19px 0 21px stretch;
+}
+body[data-theme='ocean'] .progress .track { left: 20px; right: 19px; top: 15px; bottom: 9px; }
+
+/* ---------- tabuleiro: moldura de pedra com corais, conchas e estrelas-do-mar ---------- */
+body[data-theme='ocean'] .board { background-image: url('./assets/ocean/frame.png'); }
+/* área interna da moldura (medida no frame.png: 499x454; painel de pedra de x 80 a 452 e de y 64 a 388) */
+body[data-theme='ocean'] .board-clip { top: 14.5%; right: 10%; bottom: 15%; left: 16.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='ocean'] .tool-hint { width: 60px; height: 61px; background-image: url('./assets/ocean/btn-hint.png'); }
+body[data-theme='ocean'] .tool-restart { width: 60px; height: 55px; background-image: url('./assets/ocean/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='ocean'] .tool-hint .badge { top: 0; left: 37px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='ocean'] .modal { background: rgba(4, 24, 48, 0.66); }
+body[data-theme='ocean'] .modal-card {
+  border-width: 29px 21px 30px 36px;
+  border-image: url('./assets/ocean/frame.png') 64 47 66 80 fill / 29px 21px 30px 36px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='ocean'] .topbar > .icon-btn:first-child { background-image: url('./assets/ocean/btn-back.png'); }
+body[data-theme='ocean'] .icon-btn.wood-gear { background-image: url('./assets/ocean/btn-gear.png'); }
+
+body[data-theme='ocean'] .btn-alt,
+body[data-theme='ocean'] .btn-shop,
+body[data-theme='ocean'] .btn-rank,
+body[data-theme='ocean'] .btn-danger,
+body[data-theme='ocean'] .btn-daily,
+body[data-theme='ocean'] .btn-play {
+  /* 17 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 26 17 28 fill;
+  border-image-width: 18px 12px 20px;
+}
+body[data-theme='ocean'] .btn-alt { border-image-source: url('./assets/ocean/btn-blue.png'); }
+body[data-theme='ocean'] .btn-shop { border-image-source: url('./assets/ocean/btn-cyan.png'); }
+body[data-theme='ocean'] .btn-rank,
+body[data-theme='ocean'] .btn-danger { border-image-source: url('./assets/ocean/btn-red.png'); }
+body[data-theme='ocean'] .btn-daily { border-image-source: url('./assets/ocean/btn-purple.png'); }
+body[data-theme='ocean'] .btn-play { border-image-source: url('./assets/ocean/btn-yellow.png'); }
+body[data-theme='ocean'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora do oceano, as peças do oceano nunca aparecem */
+body:not([data-theme='ocean']) .forest-decor .ocean-only { display: none; }
+/* no oceano, somem as peças dos outros temas (os vaga-lumes viram bolhas, como na praia) */
+body[data-theme='ocean'] .forest-decor > div:not(.ocean-only):not(.firefly) { display: none; }
+
+body[data-theme='ocean'] .deco-temple { left: -10px; bottom: -6px; width: min(30vw, 136px); aspect-ratio: 181 / 143;
+  background-image: url('./assets/ocean/temple.png'); }
+body[data-theme='ocean'] .deco-seaweed { right: calc(min(30vw, 136px) - 28px); bottom: -6px; width: min(13vw, 58px); aspect-ratio: 73 / 137;
+  background-image: url('./assets/ocean/seaweed.png'); }
+body[data-theme='ocean'] .deco-corals { right: -10px; bottom: -6px; width: min(30vw, 136px); aspect-ratio: 199 / 125;
+  background-image: url('./assets/ocean/corals.png'); }
+body[data-theme='ocean'] .deco-clownfish { left: 4%; top: 15%; width: min(13vw, 58px); aspect-ratio: 85 / 58;
+  background-image: url('./assets/ocean/clownfish.png'); opacity: 0.9; animation: ocean-swim 9s ease-in-out infinite alternate; }
+
+/* tela inicial: concha no lugar da alga e um peixe-anjo nadando do outro lado */
+body[data-theme='ocean'][data-screen='home'] .deco-seaweed { display: none; }
+body[data-theme='ocean'] .deco-shell { right: calc(min(30vw, 136px) - 24px); bottom: -4px; width: min(13vw, 56px); aspect-ratio: 72 / 106;
+  background-image: url('./assets/ocean/shell.png'); }
+body[data-theme='ocean'] .deco-angelfish { right: 5%; top: 40%; width: min(12vw, 54px); aspect-ratio: 78 / 60;
+  background-image: url('./assets/ocean/angelfish.png'); opacity: 0.9; animation: ocean-swim 11s ease-in-out -4s infinite alternate-reverse; }
+
+@keyframes ocean-swim {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(18px, -8px); }
+  100% { transform: translate(34px, 4px); }
+}
+
+/* bolhas no lugar dos vaga-lumes */
+body[data-theme='ocean'] .forest-decor .firefly {
+  width: 10px; height: 10px; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95) 0 18%, rgba(160, 240, 255, 0.25) 45%, rgba(120, 220, 255, 0.08) 70%);
+  border: 1px solid rgba(200, 250, 255, 0.75);
+  box-shadow: 0 0 8px 2px rgba(120, 230, 255, 0.45);
+}

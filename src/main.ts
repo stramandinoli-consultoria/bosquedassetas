@@ -8,6 +8,7 @@ import './theme-volcano.css';
 import './theme-city.css';
 import './theme-jungle.css';
 import './theme-canyon.css';
+import './theme-ocean.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -33,6 +34,7 @@ import { shopScreen } from './ui/shop';
  *  - cidade ("city-only"): prédios, árvore no vaso, floreira e hidrante, semáforo, banco e luzes (theme-city.css)
  *  - selva ("jungle-only"): ruínas, folhagem, flores tropicais, tucano e pedras com musgo (theme-jungle.css)
  *  - cânion ("canyon-only"): cacto alto, arco de pedra, formação rochosa, palma com flores, crânio e cachoeira (theme-canyon.css)
+ *  - oceano ("ocean-only"): templo submerso, alga, corais, concha e peixes (theme-ocean.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -90,6 +92,12 @@ function addForestDecor() {
     'canyon-only deco-pear',
     'canyon-only home-only deco-skull',
     'canyon-only home-only deco-waterfall',
+    'ocean-only deco-temple',
+    'ocean-only deco-seaweed',
+    'ocean-only deco-corals',
+    'ocean-only deco-clownfish',
+    'ocean-only home-only deco-shell',
+    'ocean-only home-only deco-angelfish',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');
