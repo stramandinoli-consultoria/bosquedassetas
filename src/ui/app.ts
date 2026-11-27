@@ -3,6 +3,9 @@ import desertBg from '../assets/desert/bg.jpg';
 import forestBg from '../assets/forest/bg.jpg';
 import glacierBg from '../assets/glacier/bg.jpg';
 import jungleBg from '../assets/jungle/bg.jpg';
+import canyonBg from '../assets/canyon/bg.jpg';
+import oceanBg from '../assets/ocean/bg.jpg';
+import mountainBg from '../assets/mountain/bg.jpg';
 import cityBg from '../assets/city/bg.jpg';
 import volcanoBg from '../assets/volcano/bg.jpg';
 import { CONFIG, WORLDS, type Theme } from '../config';
@@ -26,7 +29,7 @@ export interface Screen {
   destroy?(): void;
 }
 
-const THEME_BG: Record<Theme, string> = { forest: forestBg, beach: beachBg, desert: desertBg, glacier: glacierBg, volcano: volcanoBg, city: cityBg, jungle: jungleBg };
+const THEME_BG: Record<Theme, string> = { forest: forestBg, beach: beachBg, desert: desertBg, glacier: glacierBg, volcano: volcanoBg, city: cityBg, jungle: jungleBg, canyon: canyonBg, ocean: oceanBg, mountain: mountainBg };
 
 function roman(n: number): string {
   const map: [number, string][] = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
@@ -80,7 +83,7 @@ export class App {
   }
 
   /**
-   * Fundo do mundo (floresta, praia, deserto, geleira, vulcão, cidade ou selva) com um leve tom da cor do mundo por cima.
+   * Fundo do mundo (floresta, praia, deserto, geleira, vulcão, cidade, selva, cânion, oceano ou montanha) com um leve tom da cor do mundo por cima.
    * Também marca o tema em <body data-theme>, que troca as imagens das peças pelo CSS.
    */
   setBackground(w: number): void {

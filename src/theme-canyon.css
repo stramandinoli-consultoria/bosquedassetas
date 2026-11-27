@@ -1,0 +1,70 @@
+/*
+ * Tema do cânion (mundo 8 "Cânion", fases 141–160, e as voltas seguintes: Cânion II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Cânion.png" -> src/assets/canyon/
+ *
+ * Ativado por <body data-theme="canyon">, que App.setBackground() define conforme o mundo.
+ * O kit não tem botões coloridos com texto (só setas), então os botões grandes, a placa de título
+ * e os ícones continuam iguais ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='canyon'] .heart { background-image: url('./assets/canyon/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (348x80). A moeda com estrela fica inteira na ponta
+   esquerda (82px); o vão interno vai de x 79 a 342 e de y 20 a 51. */
+body[data-theme='canyon'] .progress::before {
+  border-width: 0 6px 0 35px;
+  border-image: url('./assets/canyon/bar.png') 0 14 0 82 fill / 0 6px 0 35px stretch;
+}
+body[data-theme='canyon'] .progress .track { left: 34px; right: 3px; top: 9px; bottom: 12px; }
+
+/* ---------- tabuleiro: moldura de pedra vermelha com cactos ---------- */
+body[data-theme='canyon'] .board { background-image: url('./assets/canyon/frame.png'); }
+/* área interna da moldura (medida no frame.png: 445x455; miolo de areia de x 66 a 395 e de y 72 a 400) */
+body[data-theme='canyon'] .board-clip { top: 16.5%; right: 12%; bottom: 13%; left: 15.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='canyon'] .tool-hint { width: 60px; height: 61px; background-image: url('./assets/canyon/btn-hint.png'); }
+body[data-theme='canyon'] .tool-restart { width: 60px; height: 60px; background-image: url('./assets/canyon/btn-restart.png'); }
+/* a lâmpada do kit não tem bolinha desenhada: o contador fica no canto de cima, à direita */
+body[data-theme='canyon'] .tool-hint .badge { top: -6px; left: auto; right: -6px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='canyon'] .modal { background: rgba(40, 16, 6, 0.66); }
+body[data-theme='canyon'] .modal-card {
+  border-width: 32px 22px 25px 30px;
+  border-image: url('./assets/canyon/frame.png') 72 50 55 66 fill / 32px 22px 25px 30px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='canyon'] .topbar > .icon-btn:first-child { background-image: url('./assets/canyon/btn-back.png'); }
+body[data-theme='canyon'] .icon-btn.wood-gear { background-image: url('./assets/canyon/btn-gear.png'); }
+
+/* ---------- cenário ---------- */
+/* fora do cânion, as peças do cânion nunca aparecem */
+body:not([data-theme='canyon']) .forest-decor .canyon-only { display: none; }
+/* no cânion, somem as peças dos outros temas (os vaga-lumes viram poeira dourada, como no deserto) */
+body[data-theme='canyon'] .forest-decor > div:not(.canyon-only):not(.firefly) { display: none; }
+
+body[data-theme='canyon'] .deco-saguaro { left: -8px; bottom: -6px; width: min(18vw, 82px); aspect-ratio: 143 / 232;
+  background-image: url('./assets/canyon/cactus-tall.png'); }
+body[data-theme='canyon'] .deco-arch { left: calc(min(18vw, 82px) - 24px); bottom: -8px; width: min(26vw, 118px); aspect-ratio: 246 / 145;
+  background-image: url('./assets/canyon/arch.png'); }
+body[data-theme='canyon'] .deco-butte { right: -12px; bottom: -6px; width: min(26vw, 118px); aspect-ratio: 208 / 151;
+  background-image: url('./assets/canyon/butte.png'); }
+body[data-theme='canyon'] .deco-pear { right: calc(min(26vw, 118px) - 30px); bottom: -6px; width: min(16vw, 72px); aspect-ratio: 131 / 135;
+  background-image: url('./assets/canyon/cactus-pear.png'); }
+
+/* tela inicial: crânio e cachoeira no lugar do arco e da palma */
+body[data-theme='canyon'][data-screen='home'] .deco-arch,
+body[data-theme='canyon'][data-screen='home'] .deco-pear { display: none; }
+body[data-theme='canyon'] .deco-skull { left: calc(min(18vw, 82px) - 24px); bottom: -6px; width: min(24vw, 108px); aspect-ratio: 228 / 106;
+  background-image: url('./assets/canyon/skull.png'); }
+body[data-theme='canyon'] .deco-waterfall { right: calc(min(26vw, 118px) - 34px); bottom: -8px; width: min(26vw, 116px); aspect-ratio: 244 / 122;
+  background-image: url('./assets/canyon/waterfall.png'); }
+
+/* poeira dourada no lugar dos vaga-lumes */
+body[data-theme='canyon'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #ffe2a0;
+  box-shadow: 0 0 6px 2px rgba(255, 190, 90, 0.8), 0 0 16px 5px rgba(255, 150, 40, 0.3);
+}
