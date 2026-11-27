@@ -97,6 +97,17 @@ export function openSettings(app: App): void {
       h('button', { class: 'btn', onclick: () => m.close() }, t('close')),
       resetBtn,
       h('p', { class: 'version' }, `Setas! v2.0 · ${app.s.platform}`),
+      // créditos: empresa (com link) e desenvolvedor
+      h(
+        'p',
+        { class: 'credits' },
+        t('createdBy'),
+        ' ',
+        h('a', { href: 'https://strcore.com.br/', target: '_blank', rel: 'noopener' }, 'Strcore'),
+        h('br'),
+        t('developer'),
+        ' Carlos Eduardo Stramandinoli Leme',
+      ),
     ),
     { dismissable: true },
   );
