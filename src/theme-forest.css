@@ -169,6 +169,8 @@ h2, h3 { text-shadow: var(--outline); }
 .logo-img.logo-tall { width: min(82%, 340px, 46vh); }
 /* logo um pouco mais largo que alto (o da praia, 700x521) */
 .logo-img.logo-wide { width: min(88%, 380px, 50vh); }
+/* logos dos outros mundos (imagens de ~300px): no máximo 300px, para não ampliar e borrar */
+.logo-img.logo-small { width: min(78%, 300px, 44vh); }
 @keyframes logo-bob { from { transform: translateY(0) rotate(-0.6deg); } to { transform: translateY(-7px) rotate(0.6deg); } }
 @media (min-height: 760px) { .logo { margin-top: 5vh; } }
 
