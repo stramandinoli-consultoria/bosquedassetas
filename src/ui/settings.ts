@@ -106,7 +106,7 @@ export function openSettings(app: App): void {
         h('a', { href: 'https://strcore.com.br/', target: '_blank', rel: 'noopener' }, 'Strcore'),
         h('br'),
         t('developer'),
-        ' Carlos Eduardo Stramandinoli Leme',
+        ' Carlos Eduardo Stramandinoli',
       ),
     ),
     { dismissable: true },
