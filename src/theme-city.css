@@ -1,0 +1,86 @@
+/*
+ * Tema da cidade (mundo 6 "Cidade", fases 101–120, e as voltas seguintes: Cidade II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Cidade.png" -> src/assets/city/
+ *
+ * Ativado por <body data-theme="city">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + faixa limpa do miolo + ponta esquerda espelhada), como no tema do vulcão.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='city'] .heart { background-image: url('./assets/city/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (428x75); o vão interno vai de x 53 a 363 e de y 28 a 53.
+   As pontas (prédio com plantas à esquerda, cone à direita) ficam inteiras nos 72px de cada lado. */
+body[data-theme='city'] .progress::before {
+  border-width: 0 33px;
+  border-image: url('./assets/city/bar.png') 0 72 fill / 0 33px stretch;
+}
+body[data-theme='city'] .progress .track { left: 24px; right: 29px; top: 13px; bottom: 10px; }
+
+/* ---------- tabuleiro: moldura de calçada com floreiras e cones ---------- */
+body[data-theme='city'] .board { background-image: url('./assets/city/frame.png'); }
+/* área interna da moldura (medida no frame.png: 469x446; miolo marrom de x 37 a 431 e de y 58 a 394) */
+body[data-theme='city'] .board-clip { top: 13.5%; right: 8.5%; bottom: 12%; left: 8.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='city'] .tool-hint { width: 70px; height: 59px; background-image: url('./assets/city/btn-hint.png'); }
+body[data-theme='city'] .tool-restart { width: 68px; height: 54px; background-image: url('./assets/city/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='city'] .tool-hint .badge { top: 0; left: 46px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='city'] .modal { background: rgba(14, 26, 48, 0.66); }
+body[data-theme='city'] .modal-card {
+  border-width: 27px 17px 24px 17px;
+  border-image: url('./assets/city/frame.png') 58 38 52 38 fill / 27px 17px 24px 17px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='city'] .topbar > .icon-btn:first-child { background-image: url('./assets/city/btn-back.png'); }
+body[data-theme='city'] .icon-btn.wood-gear { background-image: url('./assets/city/btn-gear.png'); }
+
+body[data-theme='city'] .btn-alt,
+body[data-theme='city'] .btn-shop,
+body[data-theme='city'] .btn-rank,
+body[data-theme='city'] .btn-danger,
+body[data-theme='city'] .btn-daily,
+body[data-theme='city'] .btn-play {
+  /* 17 = largura da ponta inteira: o brilho do canto fica nas colunas 15–16 e não pode ser esticado */
+  border-image-slice: 26 17 28 fill;
+  border-image-width: 18px 12px 20px;
+}
+body[data-theme='city'] .btn-alt { border-image-source: url('./assets/city/btn-blue.png'); }
+body[data-theme='city'] .btn-shop { border-image-source: url('./assets/city/btn-cyan.png'); }
+body[data-theme='city'] .btn-rank,
+body[data-theme='city'] .btn-danger { border-image-source: url('./assets/city/btn-red.png'); }
+body[data-theme='city'] .btn-daily { border-image-source: url('./assets/city/btn-purple.png'); }
+body[data-theme='city'] .btn-play { border-image-source: url('./assets/city/btn-yellow.png'); }
+body[data-theme='city'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da cidade, as peças da cidade nunca aparecem */
+body:not([data-theme='city']) .forest-decor .city-only { display: none; }
+/* na cidade, somem as peças dos outros temas (os vaga-lumes viram luzes) */
+body[data-theme='city'] .forest-decor > div:not(.city-only):not(.firefly) { display: none; }
+
+body[data-theme='city'] .deco-building-brick { left: -6px; bottom: -4px; width: min(18vw, 80px); aspect-ratio: 89 / 134;
+  background-image: url('./assets/city/building-brick.png'); }
+body[data-theme='city'] .deco-street-trees { right: calc(min(22vw, 96px) - 18px); bottom: -4px; width: min(30vw, 130px); aspect-ratio: 168 / 110;
+  background-image: url('./assets/city/street-trees.png'); }
+body[data-theme='city'] .deco-building-classic { right: -6px; bottom: -4px; width: min(22vw, 96px); aspect-ratio: 108 / 138;
+  background-image: url('./assets/city/building-classic.png'); }
+
+/* tela inicial: semáforo e banco no lugar da árvore e da floreira */
+body[data-theme='city'][data-screen='home'] .deco-street-trees { display: none; }
+body[data-theme='city'] .deco-traffic-light { left: calc(min(18vw, 80px) - 6px); bottom: -2px; width: min(9vw, 38px); aspect-ratio: 40 / 115;
+  background-image: url('./assets/city/traffic-light.png'); }
+body[data-theme='city'] .deco-bench { right: calc(min(22vw, 96px) - 8px); bottom: -2px; width: min(18vw, 78px); aspect-ratio: 78 / 49;
+  background-image: url('./assets/city/bench.png'); }
+
+/* luzes azuladas no lugar dos vaga-lumes */
+body[data-theme='city'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #f2fbff;
+  box-shadow: 0 0 6px 2px rgba(170, 225, 255, 0.9), 0 0 14px 4px rgba(90, 170, 255, 0.4);
+}

@@ -1,0 +1,80 @@
+/*
+ * Tema da selva (mundo 7 "Selva", fases 121–140, e as voltas seguintes: Selva II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Selva .png" -> src/assets/jungle/
+ *
+ * Ativado por <body data-theme="jungle">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana das bordas + ponta esquerda espelhada), como no tema da cidade.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='jungle'] .heart { background-image: url('./assets/jungle/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (435x100); o vão interno vai de x 33 a 413 e de y 40 a 70.
+   As pontas com folhas e cipós ficam inteiras nos 95px de cada lado. */
+body[data-theme='jungle'] .progress::before {
+  border-width: 0 32px;
+  border-image: url('./assets/jungle/bar.png') 0 95 fill / 0 32px stretch;
+}
+body[data-theme='jungle'] .progress .track { left: 11px; right: 8px; top: 14px; bottom: 10px; }
+
+/* ---------- tabuleiro: moldura de pedra com musgo, cipós e flores ---------- */
+body[data-theme='jungle'] .board { background-image: url('./assets/jungle/frame.png'); }
+/* área interna da moldura (medida no frame.png: 530x474; miolo marrom de x 68 a 455 e de y 75 a 404) */
+body[data-theme='jungle'] .board-clip { top: 16%; right: 14%; bottom: 14.5%; left: 13%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='jungle'] .tool-hint { width: 60px; height: 59px; background-image: url('./assets/jungle/btn-hint.png'); }
+body[data-theme='jungle'] .tool-restart { width: 62px; height: 52px; background-image: url('./assets/jungle/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='jungle'] .tool-hint .badge { top: -1px; left: 38px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='jungle'] .modal { background: rgba(8, 32, 14, 0.66); }
+body[data-theme='jungle'] .modal-card {
+  border-width: 32px 31px 29px 29px;
+  border-image: url('./assets/jungle/frame.png') 75 74 69 68 fill / 32px 31px 29px 29px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='jungle'] .topbar > .icon-btn:first-child { background-image: url('./assets/jungle/btn-back.png'); }
+body[data-theme='jungle'] .icon-btn.wood-gear { background-image: url('./assets/jungle/btn-gear.png'); }
+
+body[data-theme='jungle'] .btn-alt,
+body[data-theme='jungle'] .btn-shop,
+body[data-theme='jungle'] .btn-rank,
+body[data-theme='jungle'] .btn-danger,
+body[data-theme='jungle'] .btn-daily,
+body[data-theme='jungle'] .btn-play {
+  /* 17 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 26 17 28 fill;
+  border-image-width: 18px 12px 20px;
+}
+body[data-theme='jungle'] .btn-alt { border-image-source: url('./assets/jungle/btn-blue.png'); }
+body[data-theme='jungle'] .btn-shop { border-image-source: url('./assets/jungle/btn-cyan.png'); }
+body[data-theme='jungle'] .btn-rank,
+body[data-theme='jungle'] .btn-danger { border-image-source: url('./assets/jungle/btn-red.png'); }
+body[data-theme='jungle'] .btn-daily { border-image-source: url('./assets/jungle/btn-purple.png'); }
+body[data-theme='jungle'] .btn-play { border-image-source: url('./assets/jungle/btn-yellow.png'); }
+body[data-theme='jungle'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da selva, as peças da selva nunca aparecem */
+body:not([data-theme='jungle']) .forest-decor .jungle-only { display: none; }
+/* na selva, somem as peças dos outros temas (os vaga-lumes amarelos combinam com o kit e ficam como na floresta) */
+body[data-theme='jungle'] .forest-decor > div:not(.jungle-only):not(.firefly) { display: none; }
+
+body[data-theme='jungle'] .deco-ruin-arch { left: -10px; bottom: -6px; width: min(30vw, 136px); aspect-ratio: 179 / 142;
+  background-image: url('./assets/jungle/ruin-arch.png'); }
+body[data-theme='jungle'] .deco-flowers { right: calc(min(24vw, 108px) - 26px); bottom: -6px; width: min(28vw, 124px); aspect-ratio: 181 / 118;
+  background-image: url('./assets/jungle/flowers.png'); }
+body[data-theme='jungle'] .deco-foliage { right: -10px; bottom: -6px; width: min(24vw, 108px); aspect-ratio: 149 / 131;
+  background-image: url('./assets/jungle/foliage.png'); }
+
+/* tela inicial: tucano e pedras com musgo no lugar das flores */
+body[data-theme='jungle'][data-screen='home'] .deco-flowers { display: none; }
+body[data-theme='jungle'] .deco-toucan { left: calc(min(30vw, 136px) - 30px); bottom: -2px; width: min(24vw, 106px); aspect-ratio: 160 / 127;
+  background-image: url('./assets/jungle/toucan.png'); }
+body[data-theme='jungle'] .deco-mossy-rocks { right: calc(min(24vw, 108px) - 22px); bottom: -6px; width: min(22vw, 96px); aspect-ratio: 126 / 106;
+  background-image: url('./assets/jungle/mossy-rocks.png'); }
