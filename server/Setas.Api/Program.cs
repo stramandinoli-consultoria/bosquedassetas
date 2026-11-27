@@ -17,8 +17,14 @@ var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port)) builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // ---------- banco ----------
-var dbUrl = config["DATABASE_URL"] ?? config.GetConnectionString("Default")
-    ?? "Host=localhost;Port=5432;Database=setas;Username=postgres;Password=postgres";
+var dbUrl = config["DATABASE_URL"] ?? config.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(dbUrl))
+{
+    // em produção (Railway) não adianta tentar o localhost: avisa logo o que falta
+    if (!builder.Environment.IsDevelopment())
+        throw new InvalidOperationException("Defina a variável DATABASE_URL (no Railway: ${{Postgres.DATABASE_URL}}).");
+    dbUrl = "Host=localhost;Port=5432;Database=setas;Username=postgres;Password=postgres";
+}
 builder.Services.AddDbContext<AppDb>(o => o.UseNpgsql(AppDb.ToNpgsql(dbUrl)));
 
 // ---------- autenticação JWT ----------
@@ -69,7 +75,7 @@ builder.Services.AddRateLimiter(o =>
 builder.Services.Configure<ForwardedHeadersOptions>(o =>
 {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    o.KnownNetworks.Clear();
+    o.KnownIPNetworks.Clear();
     o.KnownProxies.Clear();
 });
 

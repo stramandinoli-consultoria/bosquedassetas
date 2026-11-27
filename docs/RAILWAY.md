@@ -1,5 +1,18 @@
 # Colocar o Setas! no Railway
 
+> **Atualizado em:** 27/11/2026 às 19:28 (horário de Brasília, UTC−3). Entraram o `railway.json`, a variável `PORT` e o comando seguro para gerar o `JWT_SECRET`. O passo a passo foi conferido simulando o contêiner em modo Production.
+
+## Resumo: o que o Railway precisa
+
+| Onde | O quê |
+| --- | --- |
+| Serviço do jogo → **Settings → Source** | Repositório deste projeto e a **branch** que vai para produção (ex.: `main` ou `publicar_railway`) |
+| Serviço do jogo → **Variables** | `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`, `JWT_SECRET` = texto aleatório (48 bytes), `PORT` = `8080` |
+| Projeto | Um serviço **PostgreSQL** no mesmo projeto |
+| Serviço do jogo → **Settings → Networking** | Domínio público apontando para a porta **8080** |
+
+O build (Dockerfile), o healthcheck (`/health`) e o limite de reinícios já vêm do arquivo [`railway.json`](../railway.json) na raiz, sem precisar configurar no painel.
+
 Um único serviço no Railway roda **o jogo (site/PWA) e a API** no mesmo endereço, com um banco **PostgreSQL** ao lado.
 
 ```
@@ -14,7 +27,7 @@ Custo: a API e o banco são pequenos e devem caber nos US$ 20 de uso incluídos 
 
 ## 0. Antes de tudo: conferir no seu PC
 
-A API foi escrita sem um .NET SDK disponível para compilar. Rode uma vez no seu PC (precisa do **.NET 10 SDK**):
+Antes de publicar uma mudança na engine, rode no seu PC (precisa do **.NET 10 SDK**):
 
 ```bash
 dotnet test server/Setas.Tests
@@ -49,7 +62,8 @@ gh repo create stramandinoli-consultoria/setas --private --source=. --push
 
 1. No painel do Railway: **New Project → Deploy from GitHub repo** e escolha o repositório `setas`.
    Se quiser usar um projeto que já existe: abra o projeto, clique em **+ Create** (ou **New**) → **GitHub Repo**.
-2. O Railway encontra o `Dockerfile` na raiz e usa automaticamente. O primeiro deploy pode falhar por falta de variáveis: é normal, siga os próximos passos.
+2. O Railway lê o `railway.json` da raiz: build pelo `Dockerfile`, healthcheck em `/health` e até 5 reinícios em caso de falha. O primeiro deploy pode falhar por falta de variáveis: é normal, siga os próximos passos.
+3. Em **Settings → Source**, confira a **branch** ligada ao serviço. Só os pushes nessa branch geram deploy.
 
 ## 3. Criar o banco PostgreSQL
 
@@ -64,13 +78,16 @@ Abra o serviço **setas → Variables** e crie:
 | --- | --- | --- |
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Conexão com o banco pela rede interna do Railway |
 | `JWT_SECRET` | um texto aleatório com 48+ caracteres | Assinar os logins. **Nunca** compartilhe nem mude depois (desloga todo mundo) |
+| `PORT` | `8080` | Fixa a porta da API, a mesma do domínio público (passo 5) |
 | `CORS_ORIGINS` | opcional, ex.: `https://meusite.com.br` | Só se o jogo também rodar em outro domínio |
 
-Para gerar o `JWT_SECRET` no Windows (PowerShell):
+Para gerar o `JWT_SECRET` no Windows (PowerShell), com gerador criptográfico:
 
 ```powershell
-[Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
+[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
 ```
+
+Sem `DATABASE_URL` ou sem `JWT_SECRET`, a API para logo na subida com uma mensagem dizendo qual variável falta (veja em **Deployments → View logs**).
 
 O nome dentro de `${{ }}` precisa ser o nome do serviço do banco como aparece no painel (normalmente `Postgres`, com P maiúsculo). O app e o banco precisam estar **no mesmo projeto** para a rede interna funcionar.
 
@@ -79,7 +96,7 @@ O nome dentro de `${{ }}` precisa ser o nome do serviço do banco como aparece n
 Em **setas → Settings**:
 
 1. **Networking → Generate Domain**. Se pedir a porta, use **8080**. Você recebe algo como `https://setas-production.up.railway.app`.
-2. **Deploy → Healthcheck Path**: `/health`. O Railway só troca para a versão nova quando ela responde.
+2. O healthcheck (`/health`) já vem do `railway.json`: o Railway só troca para a versão nova quando ela responde.
 
 Depois clique em **Deploy** (ou faça um novo `git push`).
 
@@ -128,6 +145,8 @@ Se mudar a engine (gerador de fases, regras): rode `npm run levels` (gera fases 
 | Sintoma | Causa provável |
 | --- | --- |
 | Deploy falha com "Defina a variável JWT_SECRET" | Falta a variável ou tem menos de 32 caracteres |
+| Deploy falha com "Defina a variável DATABASE_URL" | Falta a variável `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` |
+| Site dá erro 502 com o deploy verde | A porta do domínio (Networking) é diferente da variável `PORT`; deixe as duas em 8080 |
 | Logs: "Banco indisponível" repetido | `DATABASE_URL` errada ou o banco está em outro projeto |
 | Healthcheck falha | Domínio/porta diferente de 8080, ou a API caiu na inicialização (veja os logs) |
 | App Android diz "Servidor não configurado" | Faltou o `.env.production` com `VITE_API_URL` antes do build |
