@@ -1,0 +1,89 @@
+/*
+ * Tema da aurora (mundo 11 "Aurora", fases 201–220, e as voltas seguintes: Aurora II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Aurora.png" -> src/assets/aurora/
+ *
+ * Ativado por <body data-theme="aurora">, que App.setBackground() define conforme o mundo.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada), como no tema da montanha.
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='aurora'] .heart { background-image: url('./assets/aurora/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (439x123, com os pingentes de gelo embaixo); o vão interno
+   vai de x 50 a 385 e de y 34 a 64. As flores das pontas (52px à esquerda, 55px à direita) ficam inteiras. */
+body[data-theme='aurora'] .progress::before {
+  border-width: 0 15px 0 14px;
+  border-image: url('./assets/aurora/bar.png') 0 55 0 52 fill / 0 15px 0 14px stretch;
+}
+body[data-theme='aurora'] .progress .track { left: 14px; right: 15px; top: 9px; bottom: 16px; }
+
+/* ---------- tabuleiro: moldura de pedra com neve, pingentes de gelo e flores ---------- */
+body[data-theme='aurora'] .board { background-image: url('./assets/aurora/frame.png'); }
+/* área interna da moldura (medida no frame.png: 503x484; painel de pedra de x 58 a 449 e de y 64 a 411) */
+body[data-theme='aurora'] .board-clip { top: 13.5%; right: 11%; bottom: 15.5%; left: 12%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='aurora'] .tool-hint { width: 60px; height: 61px; background-image: url('./assets/aurora/btn-hint.png'); }
+body[data-theme='aurora'] .tool-restart { width: 60px; height: 54px; background-image: url('./assets/aurora/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='aurora'] .tool-hint .badge { top: 0; left: 37px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='aurora'] .modal { background: rgba(10, 12, 48, 0.66); }
+body[data-theme='aurora'] .modal-card {
+  border-width: 29px 24px 33px 26px;
+  border-image: url('./assets/aurora/frame.png') 64 54 73 58 fill / 29px 24px 33px 26px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='aurora'] .topbar > .icon-btn:first-child { background-image: url('./assets/aurora/btn-back.png'); }
+body[data-theme='aurora'] .icon-btn.wood-gear { background-image: url('./assets/aurora/btn-gear.png'); }
+
+body[data-theme='aurora'] .btn-alt,
+body[data-theme='aurora'] .btn-shop,
+body[data-theme='aurora'] .btn-rank,
+body[data-theme='aurora'] .btn-danger,
+body[data-theme='aurora'] .btn-daily,
+body[data-theme='aurora'] .btn-play {
+  /* 17 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 26 17 28 fill;
+  border-image-width: 18px 12px 20px;
+}
+body[data-theme='aurora'] .btn-alt { border-image-source: url('./assets/aurora/btn-blue.png'); }
+body[data-theme='aurora'] .btn-shop { border-image-source: url('./assets/aurora/btn-cyan.png'); }
+body[data-theme='aurora'] .btn-rank,
+body[data-theme='aurora'] .btn-danger { border-image-source: url('./assets/aurora/btn-red.png'); }
+body[data-theme='aurora'] .btn-daily { border-image-source: url('./assets/aurora/btn-purple.png'); }
+body[data-theme='aurora'] .btn-play { border-image-source: url('./assets/aurora/btn-yellow.png'); }
+body[data-theme='aurora'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 8px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora da aurora, as peças da aurora nunca aparecem */
+body:not([data-theme='aurora']) .forest-decor .aurora-only { display: none; }
+/* na aurora, somem as peças dos outros temas (os vaga-lumes viram brilhos da aurora) */
+body[data-theme='aurora'] .forest-decor > div:not(.aurora-only):not(.firefly) { display: none; }
+
+body[data-theme='aurora'] .deco-snow-rocks { left: -10px; bottom: -6px; width: min(26vw, 118px); aspect-ratio: 129 / 103;
+  background-image: url('./assets/aurora/rocks-big.png'); }
+body[data-theme='aurora'] .deco-crystals { left: calc(min(26vw, 118px) - 28px); bottom: -6px; width: min(20vw, 90px); aspect-ratio: 115 / 103;
+  background-image: url('./assets/aurora/crystals.png'); }
+body[data-theme='aurora'] .deco-pine { right: -8px; bottom: -6px; width: min(20vw, 92px); aspect-ratio: 107 / 144;
+  background-image: url('./assets/aurora/pine-big.png'); }
+body[data-theme='aurora'] .deco-mushrooms { right: calc(min(20vw, 92px) - 20px); bottom: -6px; width: min(22vw, 100px); aspect-ratio: 130 / 101;
+  background-image: url('./assets/aurora/mushrooms.png'); }
+
+/* tela inicial: flor de gelo e pinheirinhos no lugar dos cristais e dos cogumelos */
+body[data-theme='aurora'][data-screen='home'] .deco-crystals,
+body[data-theme='aurora'][data-screen='home'] .deco-mushrooms { display: none; }
+body[data-theme='aurora'] .deco-ice-flower { left: calc(min(26vw, 118px) - 26px); bottom: -6px; width: min(20vw, 90px); aspect-ratio: 116 / 105;
+  background-image: url('./assets/aurora/flower-big.png'); }
+body[data-theme='aurora'] .deco-small-pines { right: calc(min(20vw, 92px) - 20px); bottom: -6px; width: min(22vw, 100px); aspect-ratio: 122 / 109;
+  background-image: url('./assets/aurora/pines-small.png'); }
+
+/* brilhos verdes e lilases da aurora no lugar dos vaga-lumes */
+body[data-theme='aurora'] .forest-decor .firefly {
+  width: 5px; height: 5px; background: #e8fff8;
+  box-shadow: 0 0 6px 2px rgba(120, 255, 210, 0.8), 0 0 16px 5px rgba(180, 120, 255, 0.35);
+}

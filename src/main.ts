@@ -10,6 +10,12 @@ import './theme-jungle.css';
 import './theme-canyon.css';
 import './theme-ocean.css';
 import './theme-mountain.css';
+import './theme-aurora.css';
+import './theme-castle.css';
+import './theme-galaxy.css';
+import './theme-nebula.css';
+import './theme-infinity.css';
+import './theme-multiverse.css';
 import levels from './data/levels.json';
 import type { PackedLevel } from './engine/types';
 import { setLang } from './i18n';
@@ -37,6 +43,12 @@ import { shopScreen } from './ui/shop';
  *  - cânion ("canyon-only"): cacto alto, arco de pedra, formação rochosa, palma com flores, crânio e cachoeira (theme-canyon.css)
  *  - oceano ("ocean-only"): templo submerso, alga, corais, concha e peixes (theme-ocean.css)
  *  - montanha ("mountain-only"): pedras com musgo, tremoços, pinheiros, flores, edelvais e pinhas (theme-mountain.css)
+ *  - aurora ("aurora-only"): pedras com neve, cristais, pinheiros nevados, cogumelos luminosos e flor de gelo (theme-aurora.css)
+ *  - castelo ("castle-only"): torre, estandarte, fonte, lampião, estátua de cavaleiro e árvore no vaso de pedra (theme-castle.css)
+ *  - galáxia ("galaxy-only"): cristais, cogumelos alienígenas, planetas, portal estelar e alienígenas (theme-galaxy.css)
+ *  - nebulosa ("nebula-only"): cristais, vegetação alienígena, rochas, asteroides e planetas (theme-nebula.css)
+ *  - infinito ("infinity-only"): cristais, vegetação cósmica, portal infinito e plataformas flutuantes (theme-infinity.css)
+ *  - multiverso ("multiverse-only", depois do Infinito): cristais, cogumelos, portal, ilha flutuante e planeta (theme-multiverse.css)
  * O CSS mostra só as do tema atual (<body data-theme>).
  */
 function addForestDecor() {
@@ -106,6 +118,37 @@ function addForestDecor() {
     'mountain-only deco-flowers',
     'mountain-only home-only deco-edelweiss',
     'mountain-only home-only deco-pinecones',
+    'aurora-only deco-snow-rocks',
+    'aurora-only deco-crystals',
+    'aurora-only deco-pine',
+    'aurora-only deco-mushrooms',
+    'aurora-only home-only deco-ice-flower',
+    'aurora-only home-only deco-small-pines',
+    'castle-only deco-tower',
+    'castle-only deco-banner',
+    'castle-only deco-fountain',
+    'castle-only deco-lamp',
+    'castle-only home-only deco-knight',
+    'castle-only home-only deco-topiary',
+    'galaxy-only deco-crystals',
+    'galaxy-only deco-alien-plants',
+    'galaxy-only home-only deco-planets',
+    'galaxy-only home-only deco-portal',
+    'galaxy-only home-only deco-aliens',
+    'nebula-only deco-crystals',
+    'nebula-only deco-alien-plants',
+    'nebula-only home-only deco-rocks',
+    'nebula-only home-only deco-asteroids',
+    'nebula-only home-only deco-planet',
+    'infinity-only deco-crystals',
+    'infinity-only deco-cosmic-plants',
+    'infinity-only home-only deco-portal',
+    'infinity-only home-only deco-platforms',
+    'multiverse-only deco-crystals',
+    'multiverse-only deco-mushrooms',
+    'multiverse-only home-only deco-portal',
+    'multiverse-only home-only deco-island',
+    'multiverse-only home-only deco-saturn',
   ];
   for (const cls of pieces) {
     const d = document.createElement('div');

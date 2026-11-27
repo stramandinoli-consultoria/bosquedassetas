@@ -1,0 +1,95 @@
+/*
+ * Tema do infinito (mundo 15 "Infinito", fases 281–300, e as voltas seguintes: Infinito II…).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Infinito.png" -> src/assets/infinity/
+ *
+ * Ativado por <body data-theme="infinity">, que App.setBackground() define conforme o mundo.
+ * O kit tem fundo escuro e peças com brilho; por isso o recorte usa transparência suave,
+ * como nos temas da galáxia e da nebulosa (o brilho em volta das peças fica translúcido).
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada).
+ * O ícone dos botões começa cedo, então a ponta aqui tem 12px.
+ * A barra do kit tem o símbolo do infinito no meio, que seria esticado; o bar.png foi montado sem ele
+ * (as duas metades da barra, de x 0 a 165 e de x 290 ao fim, coladas).
+ * O que o kit não tem (botão verde, placa de título, ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='infinity'] .heart { background-image: url('./assets/infinity/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (339x107); o vão interno vai de x 52 a 290 e de y 48 a 84.
+   Os laços dourados das pontas (55px à esquerda, 50px à direita) ficam inteiros. */
+body[data-theme='infinity'] .progress::before {
+  border-width: 0 16px 0 17px;
+  border-image: url('./assets/infinity/bar.png') 0 50 0 55 fill / 0 16px 0 17px stretch;
+}
+body[data-theme='infinity'] .progress .track { left: 16px; right: 15px; top: 15px; bottom: 7px; }
+
+/* ---------- tabuleiro: moldura cósmica com laços dourados e o infinito no alto ---------- */
+body[data-theme='infinity'] .board { background-image: url('./assets/infinity/frame.png'); }
+/* área interna da moldura (medida no frame.png: 446x408; painel de pedra de x 65 a 390 e de y 85 a 370) */
+body[data-theme='infinity'] .board-clip { top: 21%; right: 12.5%; bottom: 10%; left: 14.5%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='infinity'] .tool-hint { width: 60px; height: 57px; background-image: url('./assets/infinity/btn-hint.png'); }
+body[data-theme='infinity'] .tool-restart { width: 60px; height: 53px; background-image: url('./assets/infinity/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='infinity'] .tool-hint .badge { top: 0; left: 36px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='infinity'] .modal { background: rgba(20, 6, 40, 0.7); }
+/* frame-modal.png = frame.png sem o infinito gravado embaixo do painel, que ficava atrás do texto das janelas */
+body[data-theme='infinity'] .modal-card {
+  border-width: 42px 24px 18px 28px;
+  border-image: url('./assets/infinity/frame-modal.png') 100 58 42 66 fill / 42px 24px 18px 28px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='infinity'] .topbar > .icon-btn:first-child { background-image: url('./assets/infinity/btn-back.png'); }
+body[data-theme='infinity'] .icon-btn.wood-gear { background-image: url('./assets/infinity/btn-gear.png'); }
+
+body[data-theme='infinity'] .btn-alt,
+body[data-theme='infinity'] .btn-shop,
+body[data-theme='infinity'] .btn-rank,
+body[data-theme='infinity'] .btn-danger,
+body[data-theme='infinity'] .btn-daily,
+body[data-theme='infinity'] .btn-play {
+  /* 12 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 24 12 26 fill;
+  border-image-width: 17px 8px 19px;
+}
+body[data-theme='infinity'] .btn-alt { border-image-source: url('./assets/infinity/btn-blue.png'); }
+body[data-theme='infinity'] .btn-shop { border-image-source: url('./assets/infinity/btn-cyan.png'); }
+body[data-theme='infinity'] .btn-rank,
+body[data-theme='infinity'] .btn-danger { border-image-source: url('./assets/infinity/btn-red.png'); }
+body[data-theme='infinity'] .btn-daily { border-image-source: url('./assets/infinity/btn-purple.png'); }
+body[data-theme='infinity'] .btn-play { border-image-source: url('./assets/infinity/btn-yellow.png'); }
+body[data-theme='infinity'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 6px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora do infinito, as peças do infinito nunca aparecem */
+body:not([data-theme='infinity']) .forest-decor .infinity-only { display: none; }
+/* no infinito, somem as peças dos outros temas (os vaga-lumes viram faíscas douradas) */
+body[data-theme='infinity'] .forest-decor > div:not(.infinity-only):not(.firefly) { display: none; }
+
+body[data-theme='infinity'] .deco-crystals { left: -8px; bottom: -6px; width: min(26vw, 116px); aspect-ratio: 164 / 185;
+  background-image: url('./assets/infinity/crystals.png'); }
+body[data-theme='infinity'] .deco-cosmic-plants { right: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 216 / 170;
+  background-image: url('./assets/infinity/plants.png'); }
+
+/* tela inicial: portal infinito no lugar dos cristais e plataformas flutuando no alto */
+body[data-theme='infinity'][data-screen='home'] .deco-crystals { display: none; }
+body[data-theme='infinity'] .deco-portal { left: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 222 / 202;
+  background-image: url('./assets/infinity/portal.png'); }
+body[data-theme='infinity'] .deco-platforms { right: -14px; top: 12%; width: min(28vw, 126px); aspect-ratio: 216 / 195;
+  background-image: url('./assets/infinity/platforms.png'); opacity: 0.9; animation: infinity-float 12s ease-in-out infinite alternate; }
+
+@keyframes infinity-float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-10px, 12px); }
+}
+
+/* faíscas douradas dos laços do infinito no lugar dos vaga-lumes */
+body[data-theme='infinity'] .forest-decor .firefly {
+  width: 4px; height: 4px; background: #fff6dc;
+  box-shadow: 0 0 6px 2px rgba(255, 200, 100, 0.85), 0 0 14px 5px rgba(190, 120, 255, 0.35);
+}

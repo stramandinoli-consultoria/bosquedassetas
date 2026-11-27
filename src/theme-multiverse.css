@@ -1,0 +1,98 @@
+/*
+ * Tema do multiverso: tudo depois do Infinito (da fase 301 em diante: Bosque II, Praia II…, para sempre).
+ * Peças recortadas de "imagens_para_assets/Kit de Assets fase Multiverso.png" -> src/assets/multiverse/
+ *
+ * Ativado por <body data-theme="multiverse">, que App.setBackground() define para os mundos depois do último
+ * (ver BEYOND em config.ts).
+ * O kit tem fundo escuro e peças com brilho; por isso o recorte usa transparência suave,
+ * como nos temas da galáxia, da nebulosa e do infinito.
+ * Os botões do kit vêm com texto desenhado; por isso os btn-*.png foram montados sem texto
+ * (ponta esquerda + miolo com a cor mediana logo depois da ponta + ponta esquerda espelhada).
+ * O ícone do Ranking começa cedo, então a ponta aqui tem 13px.
+ * A barra do kit tem o símbolo do infinito no meio, que seria esticado; o bar.png foi montado sem ele
+ * (as duas metades da barra, de x 0 a 160 e de x 285 ao fim, coladas).
+ * O que o kit não tem ou não usamos (botão verde, placa de título "Mundo das Setas", ícones) continua igual ao theme-forest.css.
+ */
+
+/* ---------- HUD ---------- */
+body[data-theme='multiverse'] .heart { background-image: url('./assets/multiverse/heart.png'); }
+
+/* barra de progresso: medidas do bar.png (321x89); o vão interno vai de x 52 a 285 e de y 38 a 68.
+   As pedras com runas das pontas (55px à esquerda, 50px à direita) ficam inteiras. */
+body[data-theme='multiverse'] .progress::before {
+  border-width: 0 19px 0 21px;
+  border-image: url('./assets/multiverse/bar.png') 0 50 0 55 fill / 0 19px 0 21px stretch;
+}
+body[data-theme='multiverse'] .progress .track { left: 20px; right: 14px; top: 14px; bottom: 8px; }
+
+/* ---------- tabuleiro: moldura de pedras com runas, portais nos cantos e constelações ---------- */
+body[data-theme='multiverse'] .board { background-image: url('./assets/multiverse/frame.png'); }
+/* área interna da moldura (medida no frame.png: 366x334; painel de x 48 a 318 e de y 50 a 292) */
+body[data-theme='multiverse'] .board-clip { top: 15%; right: 13%; bottom: 12.5%; left: 13%; }
+
+/* ---------- rodapé ---------- */
+body[data-theme='multiverse'] .tool-hint { width: 60px; height: 60px; background-image: url('./assets/multiverse/btn-hint.png'); }
+body[data-theme='multiverse'] .tool-restart { width: 60px; height: 55px; background-image: url('./assets/multiverse/btn-restart.png'); }
+/* o contador cobre a bolinha "5" que já vem desenhada na peça */
+body[data-theme='multiverse'] .tool-hint .badge { top: 0; left: 36px; }
+
+/* ---------- janelas ---------- */
+body[data-theme='multiverse'] .modal { background: rgba(14, 4, 40, 0.7); }
+/* os cantos (portais) ficam inteiros */
+body[data-theme='multiverse'] .modal-card {
+  border-width: 38px;
+  border-image: url('./assets/multiverse/frame.png') 90 fill / 38px stretch;
+}
+
+/* ---------- botões ---------- */
+body[data-theme='multiverse'] .topbar > .icon-btn:first-child { background-image: url('./assets/multiverse/btn-back.png'); }
+body[data-theme='multiverse'] .icon-btn.wood-gear { background-image: url('./assets/multiverse/btn-gear.png'); }
+
+body[data-theme='multiverse'] .btn-alt,
+body[data-theme='multiverse'] .btn-shop,
+body[data-theme='multiverse'] .btn-rank,
+body[data-theme='multiverse'] .btn-danger,
+body[data-theme='multiverse'] .btn-daily,
+body[data-theme='multiverse'] .btn-play {
+  /* 13 = largura da ponta inteira, para os brilhos dos cantos não serem esticados */
+  border-image-slice: 24 13 26 fill;
+  border-image-width: 17px 9px 19px;
+}
+body[data-theme='multiverse'] .btn-alt { border-image-source: url('./assets/multiverse/btn-blue.png'); }
+body[data-theme='multiverse'] .btn-shop { border-image-source: url('./assets/multiverse/btn-cyan.png'); }
+body[data-theme='multiverse'] .btn-rank,
+body[data-theme='multiverse'] .btn-danger { border-image-source: url('./assets/multiverse/btn-red.png'); }
+body[data-theme='multiverse'] .btn-daily { border-image-source: url('./assets/multiverse/btn-purple.png'); }
+body[data-theme='multiverse'] .btn-play { border-image-source: url('./assets/multiverse/btn-yellow.png'); }
+body[data-theme='multiverse'] .btn-small:is(.btn-alt, .btn-shop, .btn-rank, .btn-danger, .btn-daily, .btn-play) { border-image-width: 12px 6px 13px; }
+
+/* ---------- cenário ---------- */
+/* fora do multiverso, as peças do multiverso nunca aparecem */
+body:not([data-theme='multiverse']) .forest-decor .multiverse-only { display: none; }
+/* no multiverso, somem as peças dos outros temas (os vaga-lumes viram faíscas cósmicas) */
+body[data-theme='multiverse'] .forest-decor > div:not(.multiverse-only):not(.firefly) { display: none; }
+
+body[data-theme='multiverse'] .deco-crystals { left: -8px; bottom: -6px; width: min(28vw, 126px); aspect-ratio: 126 / 108;
+  background-image: url('./assets/multiverse/crystals.png'); }
+body[data-theme='multiverse'] .deco-mushrooms { right: -8px; bottom: -6px; width: min(24vw, 108px); aspect-ratio: 122 / 131;
+  background-image: url('./assets/multiverse/mushrooms.png'); }
+
+/* tela inicial: portal de pedra no lugar dos cristais, ilha flutuante e planeta passando no alto */
+body[data-theme='multiverse'][data-screen='home'] .deco-crystals { display: none; }
+body[data-theme='multiverse'] .deco-portal { left: -10px; bottom: -6px; width: min(30vw, 134px); aspect-ratio: 167 / 136;
+  background-image: url('./assets/multiverse/portal.png'); }
+body[data-theme='multiverse'] .deco-island { right: -12px; top: 12%; width: min(28vw, 126px); aspect-ratio: 160 / 127;
+  background-image: url('./assets/multiverse/island.png'); opacity: 0.95; animation: multiverse-float 12s ease-in-out infinite alternate; }
+body[data-theme='multiverse'] .deco-saturn { left: 2%; top: 14%; width: min(18vw, 80px); aspect-ratio: 130 / 96;
+  background-image: url('./assets/multiverse/saturn.png'); opacity: 0.9; animation: multiverse-float 14s ease-in-out -5s infinite alternate-reverse; }
+
+@keyframes multiverse-float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-10px, 12px); }
+}
+
+/* faíscas cósmicas (lilás e azul) no lugar dos vaga-lumes */
+body[data-theme='multiverse'] .forest-decor .firefly {
+  width: 4px; height: 4px; background: #f6eaff;
+  box-shadow: 0 0 6px 2px rgba(220, 120, 255, 0.85), 0 0 14px 5px rgba(100, 170, 255, 0.35);
+}
