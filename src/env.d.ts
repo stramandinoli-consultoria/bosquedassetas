@@ -7,6 +7,10 @@ declare module '*.jpg' {
   const url: string;
   export default url;
 }
+declare module '*.webp' {
+  const url: string;
+  export default url;
+}
 
 interface ImportMetaEnv {
   readonly DEV: boolean;

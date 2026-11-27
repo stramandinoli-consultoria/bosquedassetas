@@ -1,5 +1,21 @@
 import { t } from '../i18n';
 import logoUrl from '../assets/atlas/logo.png';
+import forestLogoUrl from '../assets/forest/logo.webp';
+import beachLogoUrl from '../assets/beach/logo.webp';
+import desertLogoUrl from '../assets/desert/logo.webp';
+import glacierLogoUrl from '../assets/glacier/logo.webp';
+import volcanoLogoUrl from '../assets/volcano/logo.webp';
+import cityLogoUrl from '../assets/city/logo.webp';
+import jungleLogoUrl from '../assets/jungle/logo.webp';
+import canyonLogoUrl from '../assets/canyon/logo.webp';
+import oceanLogoUrl from '../assets/ocean/logo.webp';
+import mountainLogoUrl from '../assets/mountain/logo.webp';
+import auroraLogoUrl from '../assets/aurora/logo.webp';
+import castleLogoUrl from '../assets/castle/logo.webp';
+import galaxyLogoUrl from '../assets/galaxy/logo.webp';
+import nebulaLogoUrl from '../assets/nebula/logo.webp';
+import multiverseLogoUrl from '../assets/multiverse/logo.webp';
+import type { Theme } from '../config';
 import { coinPill, h, icon, type IconName, modal } from './dom';
 import type { App, Screen } from './app';
 import { openSettings } from './settings';
@@ -9,6 +25,28 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredInstall = e;
 });
+
+/**
+ * Logo da tela inicial por tema (o tema vem do mundo da próxima fase, ver App.setBackground).
+ * Tema sem logo próprio (hoje só o infinito) usa o logo do atlas.
+ */
+const THEME_LOGO: Partial<Record<Theme, { src: string; alt: string; cls: string }>> = {
+  forest: { src: forestLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-tall' },
+  beach: { src: beachLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-wide' },
+  desert: { src: desertLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  glacier: { src: glacierLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  volcano: { src: volcanoLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  city: { src: cityLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  jungle: { src: jungleLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  canyon: { src: canyonLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  ocean: { src: oceanLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  mountain: { src: mountainLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  aurora: { src: auroraLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  castle: { src: castleLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  galaxy: { src: galaxyLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  nebula: { src: nebulaLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+  multiverse: { src: multiverseLogoUrl, alt: 'Mundo das Setas', cls: 'logo-img logo-small' },
+};
 
 function isIosSafari(): boolean {
   const ua = navigator.userAgent;
@@ -61,7 +99,13 @@ export function homeScreen(app: App): Screen {
     ),
   );
 
-  const logo = h('img', { class: 'logo-img', src: logoUrl, alt: 'Bosque das Setas', draggable: 'false' });
+  const themed = THEME_LOGO[document.body.dataset.theme as Theme];
+  const logo = h('img', {
+    class: themed?.cls ?? 'logo-img',
+    src: themed?.src ?? logoUrl,
+    alt: themed?.alt ?? 'Bosque das Setas',
+    draggable: 'false',
+  });
   const el = h('div', { class: 'screen home' }, top, h('div', { class: 'logo' }, logo), buttons);
 
   if (app.s.platform === 'web' && !isStandalone() && (deferredInstall || isIosSafari())) {
